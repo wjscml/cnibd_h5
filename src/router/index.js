@@ -23,7 +23,10 @@ export default new Router({
     },
     {
       path: '/site/:id',
-      component: NewsDetail
+      component: NewsDetail,
+      meta: {
+        title: 'aaa'
+      }
     }
   ]
 })

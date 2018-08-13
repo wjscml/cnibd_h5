@@ -87,7 +87,7 @@ export default {
         max-width: 100%
         margin: 0 auto
         display: block
-    h2
+    h1,h2
       margin-bottom 2.4rem
       font-size 1.6rem
       color #1f8bee

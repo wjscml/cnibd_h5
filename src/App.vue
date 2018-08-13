@@ -2,7 +2,7 @@
   <div id="app">
     <div class="app-content">
       <v-header></v-header>
-    <router-view></router-view>
+      <router-view></router-view>
     </div>
     <v-footer class="app-footer"></v-footer>
   </div>
