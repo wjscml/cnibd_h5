@@ -23,6 +23,12 @@ const NewsDetail = (resolve) => {
   })
 }
 
+const NotFound = (resolve) => {
+  import('../pages/not-found/not-found.vue').then((module) => {
+    resolve(module)
+  })
+}
+
 export default new Router({
   mode: 'history',
   routes: [
@@ -47,6 +53,10 @@ export default new Router({
     {
       path: '/site/:id',
       component: NewsDetail
+    },
+    {
+      path: '*',
+      component: NotFound
     }
   ]
 })

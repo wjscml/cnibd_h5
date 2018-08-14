@@ -163,37 +163,6 @@ export default {
     overflow hidden
     &.isFixed
       padding-top 4.3rem
-    .news-column
-      .news-item
-        display flex
-        padding 1.2rem 0
-        border-1px(rgba(7,17,27,0.1))
-        .item-image
-          flex-shrink 0
-          width 9rem
-          img
-            width 9rem
-            height 6rem
-        .item-txt
-          margin-left 1.5rem
-          .title
-            margin-bottom 0.8rem
-            line-height 2rem
-            font-size 1.5rem
-            font-weight 600
-            color #393a4c
-            overflow hidden
-            display -webkit-box
-            -webkit-line-clamp 2
-            text-overflow ellipsis
-            -webkit-box-orient vertical
-            height 4rem
-          .info
-            line-height 1.2rem
-            color #999
-            .author
-            .time
-              font-size 1.2rem
     .bottom-tip
       height 4rem
       line-height 4rem
