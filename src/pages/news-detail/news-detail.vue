@@ -1,5 +1,5 @@
 <template>
-  <div class="article">
+  <div class="article" v-wechat-title="newsDetails.title">
     <div class="article-header">
         <h1 class="article-title">{{newsDetails.title}}</h1>
         <div class="article-info">
