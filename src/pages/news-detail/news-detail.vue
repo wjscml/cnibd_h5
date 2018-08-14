@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     httpGet () {
-      getApi(`/test/detail?article_id=${this.$route.params.id}`).then(res => {
+      getApi(`/h5/detail?article_id=${this.$route.params.id}`).then(res => {
         if (res.data.errorCode === ERR_OK) {
           this.newsDetails = res.data.data
         }
