@@ -1,12 +1,27 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Title from 'vue-wechat-title'
-import Index from '../pages/index/index.vue'
-import About from '../pages/about/about.vue'
-import NewsDetail from '../pages/news-detail/news-detail.vue'
 
 Vue.use(Router)
 Vue.use(Title)
+
+const Index = (resolve) => {
+  import('../pages/index/index.vue').then((module) => {
+    resolve(module)
+  })
+}
+
+const About = (resolve) => {
+  import('../pages/about/about.vue').then((module) => {
+    resolve(module)
+  })
+}
+
+const NewsDetail = (resolve) => {
+  import('../pages/news-detail/news-detail.vue').then((module) => {
+    resolve(module)
+  })
+}
 
 export default new Router({
   mode: 'history',
