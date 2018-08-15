@@ -44,7 +44,7 @@ export default {
     },
     wxInit (sd) {
     // alert(window.location.href)
-      let links = encodeURIComponent(`http://192.168.31.160:8080/site/${this.$route.params.id}`)
+      let links = encodeURIComponent(`http://192.168.31.160:8080/#/site/${this.$route.params.id}`)
       let title = this.newsDetails.title
       let desc = this.newsDetails.summary
       let imgUrl = this.newsDetails.thumb
