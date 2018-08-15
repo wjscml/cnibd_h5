@@ -1,13 +1,21 @@
 <template>
   <div id="index">
-    <v-slide :slide="slide" mark=0></v-slide>
-    <div ref="newsBox"></div>
+    <div v-if="slide.length" class="slider-wrapper">
+      <slider>
+        <div class="slider-item" v-for="(item, index) in slide" :key="index">
+          <div class="slider-pic">
+            <img :src="item.thumb">
+          </div>
+          <p class="slider-info">{{item.title}}</p>
+        </div>
+      </slider>
+    </div>
     <v-news :isFixed="isFixed"></v-news>
   </div>
 </template>
 
 <script>
-import Slide from '../../components/slide/slide.vue'
+import Slider from '../../components/slider/slider.vue'
 import News from '../../components/news/news.vue'
 import {getApi} from '../../api/getApi.js'
 
@@ -22,36 +30,34 @@ export default {
   },
   created () {
     this.httpGet()
-    this.getNavtop()
   },
   mounted () {
-    window.addEventListener('scroll', this.handleScroll)
+    setTimeout(() => {
+      window.addEventListener('scroll', this.handleScroll)
+    }, 20)
   },
   methods: {
     httpGet () {
-      getApi('/h5/slide').then(res => {
+      getApi('/slide').then(res => {
         if (res.data.errorCode === ERR_OK) {
           this.slide = res.data.data
-          console.log(this.slide)
         }
-      })
-    },
-    getNavtop () {
-      this.$nextTick(() => {
-        this.navTop = this.$refs.newsBox.getBoundingClientRect().top
       })
     },
     handleScroll () {
       var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
-      if (scrollTop + 1 >= this.navTop) {
+      if (scrollTop >= 240) {
         this.isFixed = true
       } else {
         this.isFixed = false
       }
+    },
+    _getNewsNavtop () {
+      this.navTop = this.$refs.newsWrapper.getBoundingClientRect().top
     }
   },
   components: {
-    'v-slide': Slide,
+    'slider': Slider,
     'v-news': News
   },
   destroyed () {
@@ -61,5 +67,8 @@ export default {
 </script>
 
 <style lang="stylus">
+.slider-wrapper
+  height 18rem
+  margin-bottom 0.6rem
 
 </style>

@@ -29,7 +29,6 @@ export default {
   data () {
     return {
       navTop: Number,
-      fullHeight: Number,
       news: [],
       newsNav: [],
       type: 0,
@@ -58,7 +57,7 @@ export default {
   },
   methods: {
     _getNewsNav () {
-      getApi('/h5/categories').then(res => {
+      getApi('/categories').then(res => {
         if (res.data.errorCode === ERR_OK) {
           this.newsNav = res.data.data
           this.$nextTick(() => {
@@ -80,7 +79,7 @@ export default {
       })
     },
     _getNews () {
-      getApi(`/h5/list?page=0&type=${this.type}`).then(res => {
+      getApi(`/list?page=0&type=${this.type}`).then(res => {
         if (res.data.errorCode === ERR_OK) {
           this.news = res.data.data
         } else {
@@ -104,7 +103,7 @@ export default {
       var bottomTipHeight = this.$refs.bottomTip.getBoundingClientRect().top
       if (bottomTipHeight < windowHeight) {
         this.page++
-        getApi(`/h5/list?page=${this.page}&type=${this.type}`).then((res) => {
+        getApi(`/list?page=${this.page}&type=${this.type}`).then((res) => {
           if (res.data.errorCode === ERR_OK) {
             this.news = this.news.concat(res.data.data)
             this.tips = '正在加载'

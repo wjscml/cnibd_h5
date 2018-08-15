@@ -19,7 +19,7 @@ export default {
   },
   methods: {
     getAbout () {
-      getApi('/h5/about').then(res => {
+      getApi('/about').then(res => {
         if (res.data.errorCode === ERR_OK) {
           this.about = htmlDecode(res.data.data.content)
         }

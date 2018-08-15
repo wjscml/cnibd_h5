@@ -59,7 +59,7 @@ export default {
       img
         width 9rem
         height 6rem
-        background url(../slide/newsBg.png) no-repeat center
+        background url(../slider/newsBg.png) no-repeat center
         background-size 9rem 6rem
     .item-txt
       margin-left 1.5rem
