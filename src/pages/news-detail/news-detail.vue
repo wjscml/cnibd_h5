@@ -16,7 +16,7 @@
 </template>
 
 <script>
-// import wx from 'weixin-js-sdk'
+import wx from 'weixin-js-sdk'
 import {getApi} from '../../api/getApi.js'
 
 const ERR_OK = 0
@@ -35,11 +35,95 @@ export default {
   methods: {
     httpGet () {
       getApi(`/detail-share?article_id=${this.$route.params.id}&share_url=${window.location.href}`).then(res => {
-        console.log(res.data)
         if (res.data.errorCode === ERR_OK) {
           this.newsDetails = res.data.data
+          console.log(this.newsDetails.signPackage)
           this.wxInit(this.newsDetails.signPackage)
         }
+      })
+    },
+    wxInit (sd) {
+    // alert(window.location.href)
+      let links = encodeURIComponent(window.location.href)
+      let title = this.newsDetails.title
+      let desc = this.newsDetails.summary
+      let imgUrl = this.newsDetails.thumb
+      wx.config({
+        debug: true,
+        appId: sd.appId,
+        timestamp: sd.timestamp,
+        nonceStr: sd.nonceStr,
+        signature: sd.signature,
+        jsApiList: [
+          'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'
+        ]
+      })
+      wx.ready(function () {
+        wx.onMenuShareTimeline({
+          title: title, // 分享标题
+          desc: desc, // 分享描述
+          link: links, // 分享链接
+          imgUrl: imgUrl, // 分享图标
+          success: function () {
+            alert('分享到朋友圈成功')
+          },
+          cancel: function () {
+            alert('分享失败,您取消了分享!')
+          }
+        })
+        // 微信分享菜单测试
+        wx.onMenuShareAppMessage({
+          title: title, // 分享标题
+          desc: desc, // 分享描述
+          link: links, // 分享链接
+          imgUrl: imgUrl, // 分享图标
+          success: function () {
+            alert('成功分享给朋友')
+          },
+          cancel: function () {
+            alert('分享失败,您取消了分享!')
+          }
+        })
+        wx.onMenuShareQQ({
+          title: title, // 分享标题
+          desc: desc, // 分享描述
+          link: links, // 分享链接
+          imgUrl: imgUrl, // 分享图标
+          success: function () {
+            alert('成功分享给QQ')
+          },
+          cancel: function () {
+            alert('分享失败,您取消了分享!')
+          }
+        })
+        wx.onMenuShareWeibo({
+          title: title, // 分享标题
+          desc: desc, // 分享描述
+          link: links, // 分享链接
+          imgUrl: imgUrl, // 分享图标
+          success: function () {
+            alert('成功分享给朋友')
+          },
+          cancel: function () {
+            alert('分享失败,您取消了分享!')
+          }
+        })
+        wx.onMenuShareQZone({
+          title: title, // 分享标题
+          desc: desc, // 分享描述
+          link: links, // 分享链接
+          imgUrl: imgUrl, // 分享图标
+          success: function () {
+            alert('成功分享给朋友')
+          },
+          cancel: function () {
+            alert('分享失败,您取消了分享!')
+          }
+        })
+      })
+      wx.error(function (res) {
+        alert('error')
+        // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
       })
     }
   }
