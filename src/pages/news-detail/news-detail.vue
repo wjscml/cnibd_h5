@@ -34,7 +34,8 @@ export default {
   },
   methods: {
     httpGet () {
-      getApi(`/detail-share?article_id=${this.$route.params.id}&share_url=${window.location.href}`).then(res => {
+      getApi(`/detail-share?article_id=${this.$route.params.id}&share_url=${window.location.href.split('#')[0]}`).then(res => {
+        console.log(window.location.href.split('#')[0])
         if (res.data.errorCode === ERR_OK) {
           this.newsDetails = res.data.data
           console.log(this.newsDetails.signPackage)
