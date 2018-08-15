@@ -16,6 +16,7 @@
 </template>
 
 <script>
+// import wx from 'weixin-js-sdk'
 import {getApi} from '../../api/getApi.js'
 
 const ERR_OK = 0
@@ -28,11 +29,16 @@ export default {
   created () {
     this.httpGet()
   },
+  mounted () {
+
+  },
   methods: {
     httpGet () {
-      getApi(`/detail?article_id=${this.$route.params.id}`).then(res => {
+      getApi(`/detail-share?article_id=${this.$route.params.id}&share_url=${window.location.href}`).then(res => {
+        console.log(res.data)
         if (res.data.errorCode === ERR_OK) {
           this.newsDetails = res.data.data
+          this.wxInit(this.newsDetails.signPackage)
         }
       })
     }
