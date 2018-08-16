@@ -30,36 +30,36 @@ export default {
     this.httpGet()
   },
   mounted () {
-
+    this.httpGet()
   },
   methods: {
     httpGet () {
-      getApi(`/detail-share?article_id=${this.$route.params.id}&share_url=${window.location.href.split('#')[0]}`).then(res => {
-        console.log(window.location.href.split('#')[0])
+      getApi(`/detail-share?article_id=${this.$route.params.id}&share_url=${window.location.href}`).then(res => {
+        console.log(window.location.href)
         if (res.data.errorCode === ERR_OK) {
           this.newsDetails = res.data.data
           console.log(this.newsDetails.signPackage)
-          this.wxInit(this.newsDetails.signPackage)
+          wx.config({
+            debug: true,
+            appId: this.newsDetails.signPackage.appId,
+            timestamp: this.newsDetails.signPackage.timestamp,
+            nonceStr: this.newsDetails.signPackage.nonceStr,
+            signature: this.newsDetails.signPackage.signature,
+            jsApiList: [
+              'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'
+            ]
+          })
+          this.wxInit(this.newsDetails)
         }
       })
     },
     wxInit (sd) {
-    // alert(window.location.href)
-      let links = encodeURIComponent(`http://192.168.31.160:8080/#/site/${this.$route.params.id}`)
-      let title = this.newsDetails.title
-      let desc = this.newsDetails.summary
-      let imgUrl = this.newsDetails.thumb
-      wx.config({
-        debug: true,
-        appId: sd.appId,
-        timestamp: sd.timestamp,
-        nonceStr: sd.nonceStr,
-        signature: sd.signature,
-        jsApiList: [
-          'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'
-        ]
-      })
       wx.ready(function () {
+        let links = encodeURIComponent(sd.url)
+        let title = sd.title
+        let desc = sd.summary
+        let imgUrl = sd.thumb
+
         wx.onMenuShareTimeline({
           title: title, // 分享标题
           desc: desc, // 分享描述
