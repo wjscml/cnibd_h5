@@ -9,10 +9,13 @@
     </div>
     <div class="news-wrapper" ref="newsWrapper" :class="{'isFixed':isFixed}">
       <news-column :news="news" v-for="(item, index) in newsNav" :key="index" v-show="type===index"></news-column>
-      <div class="bottom-tip" ref="bottomTip">
+      <div v-show="newsNav.length" class="bottom-tip" ref="bottomTip">
         <img src="./loading.png" v-show="isLoad">
         <span class="loading-hook">{{tips}}</span>
       </div>
+    </div>
+    <div class="loading-container" v-show="!newsNav.length">
+      <loading></loading>
     </div>
   </div>
 </template>
@@ -20,11 +23,13 @@
 import {getApi} from '../../api/getApi.js'
 import BScroll from 'better-scroll'
 import NewsColumn from '../../components/news-column/news-column.vue'
+import Loading from '../../components/loading/loading.vue'
 
 const ERR_OK = 0
 export default {
   components: {
-    'news-column': NewsColumn
+    'news-column': NewsColumn,
+    'loading': Loading
   },
   data () {
     return {
@@ -132,12 +137,12 @@ export default {
 <style lang="stylus">
 @import "../../common/stylus/mixin.styl"
 #news
-  background-color #fff
   .news-nav
     width 100%
     height calc(4.2rem+2px)
     overflow hidden
     border-1px(rgba(7,17,27,0.1))
+    background-color #fff
     .nav-content
       overflow hidden
       .nav-btn
@@ -160,6 +165,7 @@ export default {
   .news-wrapper
     padding 0 2rem
     overflow hidden
+    background-color #fff
     &.isFixed
       padding-top 4.3rem
     .bottom-tip
@@ -175,4 +181,9 @@ export default {
         height 1.4rem
         -webkit-animation: loadingRotate .4s linear infinite forwards
         animation: loadingRotate .4s linear infinite forwards
+  .loading-container
+    position absolute
+    width 100%
+    top 60%
+
 </style>
