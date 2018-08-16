@@ -27,7 +27,6 @@ export default {
     }
   },
   created () {
-    this.httpGet()
   },
   mounted () {
     this.httpGet()
@@ -55,6 +54,7 @@ export default {
     },
     wxInit (sd) {
       let links = `${location.origin}${location.pathname}`
+      console.log(links)
       let title = sd.title
       let desc = sd.summary
       let imgUrl = sd.thumb
