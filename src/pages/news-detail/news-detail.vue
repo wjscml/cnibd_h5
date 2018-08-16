@@ -55,7 +55,7 @@ export default {
     },
     wxInit (sd) {
       wx.ready(function () {
-        let links = encodeURIComponent(sd.signPackage.url)
+        let links = encodeURIComponent(window.location.href)
         let title = sd.title
         let desc = sd.summary
         let imgUrl = sd.thumb
@@ -126,6 +126,17 @@ export default {
         alert('error')
         // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
       })
+    }
+  },
+  beforeRouteEnter (to, from, next) {
+    var u = navigator.userAgent
+    var isiOS = !!u.match(/\(i[^;] + ;( U;) ? CPU. + Mac OS X/) // ios终端
+    // XXX: 修复iOS版微信HTML5 History兼容性问题
+    if (isiOS && to.path !== location.pathname) {
+      // 此处不可使用location.replace
+      location.assign(to.fullPath)
+    } else {
+      next()
     }
   }
 }
