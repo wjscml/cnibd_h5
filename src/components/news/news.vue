@@ -127,6 +127,11 @@ export default {
     change (i) {
       this.type = i
       this.page = 0
+      if (i === 0) {
+        this.navScroll.scrollTo(0, 0, 10)
+      } else {
+        this.navScroll.scrollTo(-30, 0, 10)
+      }
     }
   },
   destroyed () {

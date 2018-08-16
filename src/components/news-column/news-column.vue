@@ -1,7 +1,7 @@
 <template>
 <div class="news-column">
   <div class="news-item" v-for="(newsItem, index) in news" :key="index">
-    <router-link tag="div" class="item-image" :to="newsItem.url"><img :src="newsItem.thumb"></router-link>
+    <router-link tag="div" class="item-image" :to="newsItem.url"><img v-lazy="newsItem.thumb"></router-link>
     <div class="item-txt">
       <router-link tag="h1" class="title" :to="newsItem.url">{{newsItem.title}}</router-link>
       <p class="info">
@@ -59,8 +59,6 @@ export default {
       img
         width 9rem
         height 6rem
-        background url(../slider/newsBg.png) no-repeat center
-        background-size 9rem 6rem
     .item-txt
       margin-left 1.5rem
       .title

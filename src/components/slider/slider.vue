@@ -123,8 +123,6 @@ export default {
         img
           width 100%
           height 18rem
-          background url(./newsBg.png) no-repeat center
-          background-size auto 18rem
       .slider-info
         overflow hidden
         box-sizing border-box
