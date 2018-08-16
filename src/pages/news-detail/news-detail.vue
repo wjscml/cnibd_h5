@@ -35,7 +35,7 @@ export default {
   methods: {
     httpGet () {
       getApi(`/detail-share?article_id=${this.$route.params.id}&share_url=${window.location.href}`).then(res => {
-        console.log(window.location.href)
+        console.log(window.location.pathname)
         if (res.data.errorCode === ERR_OK) {
           this.newsDetails = res.data.data
           console.log(this.newsDetails)
@@ -54,12 +54,11 @@ export default {
       })
     },
     wxInit (sd) {
+      let links = `${location.origin}${location.pathname}`
+      let title = sd.title
+      let desc = sd.summary
+      let imgUrl = sd.thumb
       wx.ready(function () {
-        let links = encodeURIComponent(window.location.href)
-        let title = sd.title
-        let desc = sd.summary
-        let imgUrl = sd.thumb
-
         wx.onMenuShareTimeline({
           title: title, // 分享标题
           desc: desc, // 分享描述
