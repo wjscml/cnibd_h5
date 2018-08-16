@@ -38,7 +38,7 @@ export default {
         console.log(window.location.href)
         if (res.data.errorCode === ERR_OK) {
           this.newsDetails = res.data.data
-          console.log(this.newsDetails.signPackage)
+          console.log(this.newsDetails)
           wx.config({
             debug: true,
             appId: this.newsDetails.signPackage.appId,
@@ -55,7 +55,7 @@ export default {
     },
     wxInit (sd) {
       wx.ready(function () {
-        let links = encodeURIComponent(sd.url)
+        let links = encodeURIComponent(sd.signPackage.url)
         let title = sd.title
         let desc = sd.summary
         let imgUrl = sd.thumb
