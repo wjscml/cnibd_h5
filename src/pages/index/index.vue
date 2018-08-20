@@ -3,9 +3,9 @@
     <div v-if="slide.length" class="slider-wrapper">
       <slider>
         <div class="slider-item" v-for="(item, index) in slide" :key="index">
-          <div class="slider-pic">
+          <a :href="item.url" class="slider-pic">
             <img :src="item.thumb">
-          </div>
+          </a>
           <p class="slider-info">{{item.title}}</p>
         </div>
       </slider>

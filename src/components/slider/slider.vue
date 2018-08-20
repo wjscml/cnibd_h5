@@ -120,6 +120,7 @@ export default {
       position relative
       float: left
       .slider-pic
+        display block
         img
           width 100%
           height 18rem
