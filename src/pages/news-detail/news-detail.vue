@@ -128,6 +128,7 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     alert(global.location.pathname)
+    alert(to.fullPath)
     if (to.path !== global.location.pathname) {
       alert('abc')
       location.assign(to.fullPath)
