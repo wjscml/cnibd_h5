@@ -39,7 +39,7 @@ export default {
           this.newsDetails = res.data.data
           console.log(this.newsDetails)
           wx.config({
-            debug: false,
+            debug: true,
             appId: this.newsDetails.signPackage.appId,
             timestamp: this.newsDetails.signPackage.timestamp,
             nonceStr: this.newsDetails.signPackage.nonceStr,
@@ -129,10 +129,11 @@ export default {
   beforeRouteEnter (to, from, next) {
     var u = navigator.userAgent
     var isiOS = !!u.match(/\(i[^;] + ;( U;) ? CPU. + Mac OS X/) // ios终端
+    console.log(u, isiOS, to.fullPath)
     // XXX: 修复iOS版微信HTML5 History兼容性问题
-    if (isiOS && to.path !== location.pathname) {
+    if (isiOS) {
       // 此处不可使用location.replace
-      location.assign(to.fullPath)
+      location.assign(`https://h5.cnibd.com${location.pathname}`)
     } else {
       next()
     }
