@@ -65,6 +65,7 @@ export default {
       getApi('/categories').then(res => {
         if (res.data.errorCode === ERR_OK) {
           this.newsNav = res.data.data
+          console.log(this.newsNav)
           this.$nextTick(() => {
             let width = 0
             for (let i = 0; i < this.newsNav.length - 1; i++) {
@@ -130,7 +131,11 @@ export default {
       if (i === 0) {
         this.navScroll.scrollTo(0, 0, 10)
       } else {
-        this.navScroll.scrollTo(-30, 0, 10)
+        if (i >= 4) {
+          this.navScroll.scrollTo(-100, 0, 10)
+        } else {
+          this.navScroll.scrollTo(-10, 0, 10)
+        }
       }
     }
   },
