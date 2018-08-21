@@ -53,7 +53,7 @@ export default {
       })
     },
     wxInit (sd) {
-      let links = encodeURIComponent(`${location.origin}${location.pathname}`)
+      let links = encodeURIComponent(`${window.location.href}`)
       console.log(links)
       let title = sd.title
       let desc = sd.summary
