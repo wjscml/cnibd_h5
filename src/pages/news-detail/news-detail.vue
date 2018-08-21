@@ -33,7 +33,8 @@ export default {
   },
   methods: {
     httpGet () {
-      getApi(`/detail-share?article_id=${this.$route.params.id}&share_url=${window.location.href}`).then(res => {
+      let url = encodeURIComponent(`${window.location.href}`)
+      getApi(`/detail-share?article_id=${this.$route.params.id}&share_url=${url}`).then(res => {
         console.log(window.location.pathname)
         if (res.data.errorCode === ERR_OK) {
           this.newsDetails = res.data.data
@@ -53,7 +54,7 @@ export default {
       })
     },
     wxInit (sd) {
-      let links = encodeURIComponent(`${window.location.href}`)
+      let links = `${window.location.href}`
       console.log(links)
       let title = sd.title
       let desc = sd.summary
