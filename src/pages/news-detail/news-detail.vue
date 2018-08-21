@@ -40,7 +40,7 @@ export default {
           this.newsDetails = res.data.data
           console.log(this.newsDetails)
           wx.config({
-            debug: true,
+            debug: false,
             appId: this.newsDetails.signPackage.appId,
             timestamp: this.newsDetails.signPackage.timestamp,
             nonceStr: this.newsDetails.signPackage.nonceStr,
