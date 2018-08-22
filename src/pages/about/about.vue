@@ -6,6 +6,8 @@
 <script>
 import {getApi} from '../../api/getApi.js'
 import {htmlDecode} from '../../common/js/htmlUtil.js'
+import wx from 'weixin-js-sdk'
+import {wxInit} from '../../common/js/share.js'
 
 const ERR_OK = 0
 export default {
@@ -17,6 +19,9 @@ export default {
   created () {
     this.getAbout()
   },
+  mounted () {
+    this.share()
+  },
   methods: {
     getAbout () {
       getApi('/about').then(res => {
@@ -26,6 +31,25 @@ export default {
       }).catch(error => {
         if (!error.res) {
           this.about = '网络不给力，请稍后重试'
+        }
+      })
+    },
+    share () {
+      let url = encodeURIComponent(`${window.location.href}`)
+      getApi(`/slide&share_url=${url}`).then(res => {
+        console.log(res)
+        if (res.data.errorCode === ERR_OK) {
+          wx.config({
+            debug: false,
+            appId: res.data.data.signPackage.appId,
+            timestamp: res.data.data.signPackage.timestamp,
+            nonceStr: res.data.data.signPackage.nonceStr,
+            signature: res.data.data.signPackage.signature,
+            jsApiList: [
+              'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'
+            ]
+          })
+          wxInit(res.data.data)
         }
       })
     }

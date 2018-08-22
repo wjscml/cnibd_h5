@@ -18,6 +18,8 @@
 import Slider from '../../components/slider/slider.vue'
 import News from '../../components/news/news.vue'
 import {getApi} from '../../api/getApi.js'
+import wx from 'weixin-js-sdk'
+import {wxInit} from '../../common/js/share.js'
 
 const ERR_OK = 0
 export default {
@@ -34,6 +36,7 @@ export default {
   mounted () {
     setTimeout(() => {
       window.addEventListener('scroll', this.handleScroll)
+      this.share()
     }, 20)
   },
   methods: {
@@ -54,6 +57,25 @@ export default {
     },
     _getNewsNavtop () {
       this.navTop = this.$refs.newsWrapper.getBoundingClientRect().top
+    },
+    share () {
+      let url = encodeURIComponent(`${window.location.href}`)
+      getApi(`/slide&share_url=${url}`).then(res => {
+        console.log(res)
+        if (res.data.errorCode === ERR_OK) {
+          wx.config({
+            debug: false,
+            appId: res.data.data.signPackage.appId,
+            timestamp: res.data.data.signPackage.timestamp,
+            nonceStr: res.data.data.signPackage.nonceStr,
+            signature: res.data.data.signPackage.signature,
+            jsApiList: [
+              'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'
+            ]
+          })
+          wxInit(res.data.data)
+        }
+      })
     }
   },
   components: {
