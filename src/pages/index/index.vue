@@ -60,7 +60,7 @@ export default {
     },
     share () {
       let url = encodeURIComponent(`${window.location.href}`)
-      getApi(`/slide&share_url=${url}`).then(res => {
+      getApi(`/sign?share_url=${url}`).then(res => {
         console.log(res)
         if (res.data.errorCode === ERR_OK) {
           wx.config({
