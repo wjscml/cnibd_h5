@@ -61,7 +61,6 @@ export default {
     share () {
       let url = encodeURIComponent(`${window.location.href}`)
       getApi(`/sign?share_url=${url}`).then(res => {
-        console.log(res)
         if (res.data.errorCode === ERR_OK) {
           wx.config({
             debug: false,

@@ -1,7 +1,7 @@
 <template>
   <div id="app" v-wechat-title="$route.meta.title">
     <div class="app-content">
-      <v-header></v-header>
+      <v-header v-if="hasHeader"></v-header>
       <router-view></router-view>
     </div>
     <v-footer class="app-footer"></v-footer>
@@ -11,14 +11,19 @@
 <script>
 import Header from './components/header/header.vue'
 import Footer from './components/footer/footer.vue'
+import Bus from './common/js/bus.js'
 
 export default {
   data () {
     return {
-      slide: {}
+      slide: {},
+      hasHeader: true
     }
   },
   created () {
+    Bus.$on('getHasHeader', (data) => {
+      this.hasHeader = data
+    })
   },
   components: {
     'v-header': Header,

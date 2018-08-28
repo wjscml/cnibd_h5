@@ -23,6 +23,12 @@ const NewsDetail = (resolve) => {
   })
 }
 
+const NewsDetailProgram = (resolve) => {
+  import('../pages/news-detail/news-detail-miniprogram.vue').then((module) => {
+    resolve(module)
+  })
+}
+
 const NotFound = (resolve) => {
   import('../pages/not-found/not-found.vue').then((module) => {
     resolve(module)
@@ -53,6 +59,10 @@ export default new Router({
     {
       path: '/site/:id',
       component: NewsDetail
+    },
+    {
+      path: '/miniprogram/:id',
+      component: NewsDetailProgram
     },
     {
       path: '*',

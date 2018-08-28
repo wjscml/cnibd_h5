@@ -22,7 +22,6 @@ export default {
     news: {}
   },
   mounted () {
-
   },
   methods: {
     newsScroll () {
@@ -34,7 +33,6 @@ export default {
             pullUpLoad: true
           })
           this.newsScroll.on('scrollEnd', () => {
-            console.log(this.newsScroll.y)
             if (this.newsScroll.y <= (this.newsScroll.maxScrollY + 50)) {
               this.loadMore()
             }

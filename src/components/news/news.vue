@@ -1,6 +1,6 @@
 <template>
   <div id="news">
-    <div class="news-nav" ref="navWrapper" :class="{'isFixed':isFixed}">
+    <div class="news-nav" ref="navWrapper" :class="{'isFixed':isFixed}" v-if="newsNav.length">
       <div class="nav-content" ref="navContent">
         <div class="nav-btn" v-for="(item, index) in newsNav" :key="index" @click="change(index)" ref="navBtn">
           <span :class="{'nav-s':type===index}">{{item.name}}</span>
@@ -65,14 +65,12 @@ export default {
       getApi('/categories').then(res => {
         if (res.data.errorCode === ERR_OK) {
           this.newsNav = res.data.data
-          console.log(this.newsNav)
           this.$nextTick(() => {
             let width = 0
             for (let i = 0; i < this.newsNav.length - 1; i++) {
               width += this.$refs.navBtn[i].getBoundingClientRect().width
             }
             this.$refs.navContent.style.width = width + 'px'
-            console.log(width)
             this.navScroll = new BScroll(this.$refs.navWrapper, {
               startX: 0,
               click: true,
