@@ -10,7 +10,7 @@
             <div class="time">{{newsDetails.publish_time}}</div>
         </div>
     </div>
-    <div class="article-content" v-html="newsDetails.content">
+    <div class="article-content" v-html="newsContent">
     </div>
   </div>
 </template>
@@ -19,12 +19,14 @@
 import wx from 'weixin-js-sdk'
 import {wxInit} from '../../common/js/share.js'
 import {getApi} from '../../api/getApi.js'
+import {addTableBox} from '../../common/js/htmlUtil.js'
 
 const ERR_OK = 0
 export default {
   data () {
     return {
-      newsDetails: []
+      newsDetails: [],
+      newsContent: String
     }
   },
   created () {
@@ -39,6 +41,7 @@ export default {
         console.log(window.location.pathname)
         if (res.data.errorCode === ERR_OK) {
           this.newsDetails = res.data.data
+          this.newsContent = addTableBox(res.data.data.content)
           console.log(this.newsDetails)
           wx.config({
             debug: false,
@@ -109,4 +112,24 @@ export default {
       margin-bottom 2.4rem
       font-size 1.6rem
       color #1f8bee
+    .table-container
+      width: 100%
+      overflow-y: auto
+      _overflow: auto
+      margin: 0 0 1em
+      table
+        border:0
+        border-collapse:collapse
+        td,th
+          border:1px solid #999
+          padding:.5em 1em
+      // 添加IOS下滚动条
+      &::-webkit-scrollbar
+        -webkit-appearance: none
+        width: 14px
+        height: 14px
+      &::-webkit-scrollbar-thumb
+        border-radius: 8px
+        border: 3px solid #fff
+        background-color: rgba(0, 0, 0, .3)
 </style>

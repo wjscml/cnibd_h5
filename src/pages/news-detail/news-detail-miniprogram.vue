@@ -19,6 +19,7 @@
 import wx from 'weixin-js-sdk'
 import {wxInit} from '../../common/js/share.js'
 import {getApi} from '../../api/getApi.js'
+import {addTableBox} from '../../common/js/htmlUtil.js'
 import Bus from '../../common/js/bus.js'
 
 const ERR_OK = 0
@@ -41,6 +42,7 @@ export default {
       getApi(`/detail-share?article_id=${this.$route.params.id}&share_url=${url}`).then(res => {
         if (res.data.errorCode === ERR_OK) {
           this.newsDetails = res.data.data
+          this.newsContent = addTableBox(res.data.data.content)
           wx.config({
             debug: false,
             appId: this.newsDetails.signPackage.appId,

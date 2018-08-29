@@ -5,3 +5,11 @@ export function htmlDecode (text) {
   temp = null
   return output
 }
+
+export function addTableBox (str) {
+  var s = ''
+  if (str.length === 0) return ''
+  s = str.replace(/<table/g, '<div class="table-container"><table')
+  s = s.replace(/<\/table>/g, '</table></div>')
+  return s
+}
