@@ -10,7 +10,7 @@
             <div class="time">{{newsDetails.publish_time}}</div>
         </div>
     </div>
-    <div class="article-content" v-html="newsDetails.content">
+    <div class="article-content" v-html="newsContent">
     </div>
   </div>
 </template>
@@ -27,6 +27,7 @@ export default {
   data () {
     return {
       newsDetails: [],
+      newsContent: '',
       hasHeader: false
     }
   },

@@ -26,7 +26,7 @@ export default {
   data () {
     return {
       newsDetails: [],
-      newsContent: String
+      newsContent: ''
     }
   },
   created () {
