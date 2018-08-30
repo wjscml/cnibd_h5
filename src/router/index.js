@@ -62,7 +62,10 @@ export default new Router({
     },
     {
       path: '/calculator',
-      component: Calculator
+      component: Calculator,
+      meta: {
+        title: '赛恩财经--个税计算器'
+      }
     },
     {
       path: '*',
