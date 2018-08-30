@@ -23,8 +23,8 @@ const NewsDetail = (resolve) => {
   })
 }
 
-const NewsDetailProgram = (resolve) => {
-  import('../pages/news-detail/news-detail-miniprogram.vue').then((module) => {
+const Calculator = (resolve) => {
+  import('../pages/news-detail/calculator.vue').then((module) => {
     resolve(module)
   })
 }
@@ -61,8 +61,8 @@ export default new Router({
       component: NewsDetail
     },
     {
-      path: '/miniprogram/:id',
-      component: NewsDetailProgram
+      path: '/calculator',
+      component: Calculator
     },
     {
       path: '*',

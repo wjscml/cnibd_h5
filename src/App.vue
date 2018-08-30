@@ -38,10 +38,12 @@ body
   height 100%
   background-color #f2f2f2
   #app
-    height 100%
+    min-height 100%
+    display flex
+    flex-direction column
+    justify-content space-between
+    box-sizing border-box
     .app-content
-      min-height 100%
-      padding-bottom 7.6rem
-    .app-footer
-      margin-top -7.6rem
+      flex-grow 1
+
 </style>
