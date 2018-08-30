@@ -91,5 +91,34 @@ export default {
 .slider-wrapper
   height 18rem
   margin-bottom 0.6rem
+  .slider
+    min-height: 1px
+    overflow: hidden
+    .slider-group
+      overflow: hidden
+      height 18rem
+      .slider-item
+        position relative
+        float: left
+        .slider-pic
+          display block
+          img
+            width 100%
+            height 18rem
+        .slider-info
+          overflow hidden
+          box-sizing border-box
+          position absolute
+          bottom 0
+          left 0
+          width 100%
+          padding 0 2rem
+          line-height 3rem
+          font-size 1.6rem
+          background-color rgba(0,0,0,0.5)
+          color #fff
+          text-align center
+          white-space nowrap
+          text-overflow ellipsis
 
 </style>

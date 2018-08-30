@@ -32,7 +32,8 @@ const ERR_OK = 0
 export default {
   components: {
     'news-column': NewsColumn,
-    'loading': Loading
+    'loading': Loading,
+    'slider': Slider
   },
   data () {
     return {
@@ -171,6 +172,7 @@ export default {
       z-index 999
   .news-wrapper
     padding 0 2rem
+    box-sizing border-box
     overflow hidden
     background-color #fff
     &.isFixed

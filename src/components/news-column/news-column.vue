@@ -47,7 +47,9 @@ export default {
 <style lang="stylus">
 @import "../../common/stylus/mixin.styl"
 .news-column
+  overflow hidden
   .news-item
+    float left
     display flex
     padding 1.2rem 0
     border-1px(rgba(7,17,27,0.1))
@@ -71,6 +73,7 @@ export default {
         text-overflow ellipsis
         -webkit-box-orient vertical
         height 4rem
+        text-wrap: normal
       .info
         line-height 1.2rem
         color #999
