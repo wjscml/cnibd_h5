@@ -1,74 +1,76 @@
 <template>
 <div class="calculator">
-  <h3>个税计算器</h3>
-  <input type="number" id="salary" placeholder="请输入工资" v-model.number='bfoIncome'/>
-  <p v-show='bfoIncome<1550'><b>您的工资小于最低标准</b></p>
-  <div class="list" v-show='bfoIncome>=1550'>
-    <ul>
-      <li>
-        <div>
-          <label>养老保险</label>
-          <input v-model.number='oldSL'/>
-          <b>%</b>
-        </div>
-        <div>
-          <b>{{bfoIncome*oldSL/100}}</b>
-        </div>
-      </li>
-      <li>
-        <div>
-          <label>医疗保险</label>
-          <input v-model.number='ylSL'/>
-          <b>%</b>
-        </div>
-        <div>
-          <b>{{bfoIncome*ylSL/100}}</b>
-        </div>
-      </li>
-      <li>
-        <div>
-          <label>失业保险</label>
-          <input v-model.number='sySL' />
-          <b>%</b>
-        </div>
-        <div>
-          <b>{{bfoIncome*sySL/100}}</b>
-        </div>
-      </li>
-      <li>
-        <div>
-          <label>住房公积金</label>
-          <input v-model.number='zfSL'/>
-          <b>%</b>
-        </div>
-        <div>
-          <b>{{bfoIncome*zfSL/100}}</b>
-        </div>
-      </li>
-      <li>
-        <div>
-          <label>税前工资</label>
-        </div>
-        <div>
-          <b>{{bfoRes|dataFormatter}}</b>
-        </div>
-      </li>
-      <li>
-        <div>
-          <label>个人所得税</label>
-        </div>
-        <div>
-          <b>{{grsds|dataFormatter}}</b>
-        </div>
-      </li>
-    </ul>
-  </div>
-  <div class="result" v-show='bfoIncome>=1550'>
-    <div>
-      <b>税后工资</b>
+  <h3 class="header">个税计算器</h3>
+  <div class="content">
+    <input type="number" id="salary" placeholder="请输入工资" v-model.number='bfoIncome'/>
+    <p v-show='bfoIncome<1550'><b>您的工资小于最低标准</b></p>
+    <div class="list" v-show='bfoIncome>=1550'>
+      <ul>
+        <li>
+          <div>
+            <label>养老保险</label>
+            <input v-model.number='oldSL'/>
+            <b>%</b>
+          </div>
+          <div>
+            <b>{{bfoIncome*oldSL/100}}</b>
+          </div>
+        </li>
+        <li>
+          <div>
+            <label>医疗保险</label>
+            <input v-model.number='ylSL'/>
+            <b>%</b>
+          </div>
+          <div>
+            <b>{{bfoIncome*ylSL/100}}</b>
+          </div>
+        </li>
+        <li>
+          <div>
+            <label>失业保险</label>
+            <input v-model.number='sySL' />
+            <b>%</b>
+          </div>
+          <div>
+            <b>{{bfoIncome*sySL/100}}</b>
+          </div>
+        </li>
+        <li>
+          <div>
+            <label>住房公积金</label>
+            <input v-model.number='zfSL'/>
+            <b>%</b>
+          </div>
+          <div>
+            <b>{{bfoIncome*zfSL/100}}</b>
+          </div>
+        </li>
+        <li>
+          <div>
+            <label>税前工资</label>
+          </div>
+          <div>
+            <b>{{bfoRes|dataFormatter}}</b>
+          </div>
+        </li>
+        <li>
+          <div>
+            <label>个人所得税</label>
+          </div>
+          <div>
+            <b>{{grsds|dataFormatter}}</b>
+          </div>
+        </li>
+      </ul>
     </div>
-    <div>
-      <b>{{shgz|dataFormatter}}</b>
+    <div class="result" v-show='bfoIncome>=1550'>
+      <div>
+        <b>税后工资</b>
+      </div>
+      <div>
+        <b>{{shgz|dataFormatter}}</b>
+      </div>
     </div>
   </div>
 </div>
@@ -141,39 +143,47 @@ export default {
 <style lang="stylus">
 @import "../../common/stylus/mixin.styl"
 .calculator
-  padding 0 4rem
+  min-height calc(100vh - 7.6rem)
   background-color #fff
   color #393a4c
-  min-height calc(100vh - 7.6rem)
-  h3
+  .header
     line-height 4.92rem
     height 4.92rem
     border-1px(rgba(7,17,27,0.1))
     text-align center
-  #salary
-    box-sizing border-box
-    width: 100%
-    height: 3.6rem
-    margin 4rem 0 2rem
-    border-radius: 3px
-    border: 1px solid #e0e0e0
-    text-align center
-  .list
-    border-bottom: 1px solid black
-    ul
-      li
-        display: flex
-        justify-content: space-between
-        margin: 2rem 1rem
-        label
-          display inline-block
-          width 7rem
-        input
-          width 4rem
-          border: 1px solid #e0e0e0
-  .result
-    display: flex
-    justify-content: space-between
-    padding 1.4rem 1rem 2rem
+  .content
+    padding 0 4rem
+    #salary
+      box-sizing border-box
+      width: 100%
+      height: 3.6rem
+      line-height 3.6rem
+      margin 4rem 0 2rem
+      border-radius: 3px
+      border: 1px solid #e0e0e0
+      outline none
+      text-align center
+      caret-color: #1f8bee
+      &:focus
+        border-color #1f8bee
+    .list
+      border-bottom: 1px solid black
+      ul
+        li
+          display: flex
+          justify-content: space-between
+          margin: 2rem 1rem
+          label
+            display inline-block
+            width 7rem
+          input
+            width 4rem
+            border: 1px solid #e0e0e0
+            outline none
+            caret-color: #1f8bee
+    .result
+      display: flex
+      justify-content: space-between
+      padding 1.4rem 1rem 2rem
 
 </style>
