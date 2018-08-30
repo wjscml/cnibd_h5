@@ -46,14 +46,14 @@ export default new Router({
       path: '/index',
       component: Index,
       meta: {
-        title: '赛恩财经'
+        title: '赛恩财经:聚合财经新媒体'
       }
     },
     {
       path: '/about',
       component: About,
       meta: {
-        title: '赛恩财经--关于'
+        title: '赛恩财经——关于我们'
       }
     },
     {
@@ -64,7 +64,7 @@ export default new Router({
       path: '/calculator',
       component: Calculator,
       meta: {
-        title: '赛恩财经--个税计算器'
+        title: '赛恩财经——个税计算器'
       }
     },
     {

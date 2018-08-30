@@ -7,8 +7,10 @@
         </div>
       </div>
     </div>
-    <div class="news-wrapper" ref="newsWrapper" :class="{'isFixed':isFixed}">
-      <news-column :news="news" v-for="(item, index) in newsNav" :key="index" v-show="type===index"></news-column>
+    <div class="news-wrapper" :class="{'isFixed':isFixed}">
+      <div ref="newsWrapper">
+        <news-column :news="news" v-for="(item, index) in newsNav" :key="index" v-show="type===index"></news-column>
+      </div>
       <div v-show="newsNav.length" class="bottom-tip" ref="bottomTip">
         <img src="./loading.png" v-show="isLoad">
         <span class="loading-hook">{{tips}}</span>
@@ -24,6 +26,7 @@ import {getApi} from '../../api/getApi.js'
 import BScroll from 'better-scroll'
 import NewsColumn from '../../components/news-column/news-column.vue'
 import Loading from '../../components/loading/loading.vue'
+import Slider from '../../components/slider/slider.vue'
 
 const ERR_OK = 0
 export default {
@@ -58,7 +61,7 @@ export default {
     setTimeout(() => {
       this._getNewsNav()
       window.addEventListener('scroll', this.loadMore)
-    }, 20)
+    }, 10)
   },
   methods: {
     _getNewsNav () {
@@ -126,15 +129,11 @@ export default {
     change (i) {
       this.type = i
       this.page = 0
-      if (i === 0) {
-        this.navScroll.scrollTo(0, 0, 10)
-      } else {
-        if (i >= 4) {
-          this.navScroll.scrollTo(-100, 0, 10)
-        } else {
-          this.navScroll.scrollTo(-10, 0, 10)
-        }
-      }
+      this.scrollCenter(i)
+    },
+    scrollCenter (val) {
+      this.navScroll.scrollToElement(this.$refs.navBtn[val], 300, true, true)
+      this.navScroll.refresh()
     }
   },
   destroyed () {
@@ -160,7 +159,7 @@ export default {
           display inline-block
           line-height 1.6rem
           font-size 1.6rem
-          padding 1.4rem 2rem 1.2rem
+          padding 1.4rem 2.2rem 1.2rem
           border-bottom 2px solid #fff
           &.nav-s
             border-color #1f8bee
