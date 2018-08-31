@@ -20,15 +20,17 @@
     <div class="loading-container" v-show="!newsNav.length">
       <loading></loading>
     </div>
-    <div class="nav-more-wrapper" v-show="isMoreTab">
-      <div>
-        <h1 class="title">更多栏目</h1>
-        <div class="content">
-          <span class="item" v-for="(item, index) in newsNav" :key="index" @click="change(index)">{{item.name}}</span>
+    <transition name="fade">
+      <div class="nav-more-wrapper" v-show="isMoreTab">
+        <div>
+          <h1 class="title">更多栏目</h1>
+          <div class="content">
+            <span class="item" v-for="(item, index) in newsNav" :key="index" @click="change(index)">{{item.name}}</span>
+          </div>
         </div>
+        <div class="close" @click="hideMoreTab"></div>
       </div>
-      <div class="close" @click="hideMoreTab"></div>
-    </div>
+    </transition>
   </div>
 </template>
 <script>
@@ -255,8 +257,13 @@ export default {
     width 100%
     height 100vh
     background-color rgba(7,17,27,0.9)
+    transition all 0.5s
     backdrop-filter: blur(10px)
     z-index 200
+    &.fade-transition
+      opacity 1
+    &.fade-enter, &.fade-leave
+      opacity 0
     .title
       height 4.92rem
       line-height 4.92rem
