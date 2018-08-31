@@ -6,8 +6,9 @@
           <span :class="{'nav-s':type===index}">{{item.name}}</span>
         </div>
       </div>
+      <div class="nav-more-btn" @click="showMoreTab"></div>
     </div>
-    <div class="news-wrapper" :class="{'isFixed':isFixed}">
+    <div class="news-wrapper">
       <div ref="newsWrapper">
         <news-column :news="news" v-for="(item, index) in newsNav" :key="index" v-show="type===index"></news-column>
       </div>
@@ -18,6 +19,15 @@
     </div>
     <div class="loading-container" v-show="!newsNav.length">
       <loading></loading>
+    </div>
+    <div class="nav-more-wrapper" v-show="isMoreTab">
+      <div>
+        <h1 class="title">更多栏目</h1>
+        <div class="content">
+          <span class="item" v-for="(item, index) in newsNav" :key="index" @click="change(index)">{{item.name}}</span>
+        </div>
+      </div>
+      <div class="close" @click="hideMoreTab"></div>
     </div>
   </div>
 </template>
@@ -43,7 +53,8 @@ export default {
       type: 0,
       page: 0,
       tips: '上滑加载更多',
-      isLoad: null
+      isLoad: null,
+      isMoreTab: null
     }
   },
   props: {
@@ -53,6 +64,14 @@ export default {
     type (i) {
       this._getNews()
       this.scrollTop()
+    },
+    isMoreTab (curVal, oldVal) {
+      console.log(curVal, oldVal)
+      if (curVal === true) {
+        this.stop()
+      } else {
+        this.move()
+      }
     }
   },
   created () {
@@ -71,7 +90,7 @@ export default {
           this.newsNav = res.data.data
           this.$nextTick(() => {
             let width = 0
-            for (let i = 0; i < this.newsNav.length - 1; i++) {
+            for (let i = 0; i < this.newsNav.length; i++) {
               width += this.$refs.navBtn[i].getBoundingClientRect().width
             }
             this.$refs.navContent.style.width = width + 'px'
@@ -131,10 +150,33 @@ export default {
       this.type = i
       this.page = 0
       this.scrollCenter(i)
+      this.isMoreTab = false
     },
     scrollCenter (val) {
       this.navScroll.scrollToElement(this.$refs.navBtn[val], 300, true, true)
       this.navScroll.refresh()
+    },
+    showMoreTab () {
+      this.isMoreTab = true
+    },
+    hideMoreTab () {
+      this.isMoreTab = false
+    },
+    /** 滑动限制 **/
+    stop () {
+      var mo = function (e) {
+        e.preventDefault()
+      }
+      document.body.style.overflow = 'hidden'
+      document.addEventListener('touchmove', mo, false)
+    },
+    /** 取消滑动限制 **/
+    move () {
+      var mo = function (e) {
+        e.preventDefault()
+      }
+      document.body.style.overflow = ''
+      document.removeEventListener('touchmove', mo, false)
     }
   },
   destroyed () {
@@ -146,13 +188,20 @@ export default {
 @import "../../common/stylus/mixin.styl"
 #news
   .news-nav
+    position relative
     width 100%
-    height calc(4.2rem+2px)
+    height 4.4rem
     overflow hidden
     border-1px(rgba(7,17,27,0.1))
     background-color #fff
+    &.isFixed
+      position fixed
+      top 0
+      background-color #fff
+      z-index 100
     .nav-content
       overflow hidden
+      padding-right 4rem
       .nav-btn
         float left
         display inline-block
@@ -160,23 +209,25 @@ export default {
           display inline-block
           line-height 1.6rem
           font-size 1.6rem
-          padding 1.4rem 2.2rem 1.2rem
-          border-bottom 2px solid #fff
+          padding 1.4rem 2rem 1.2rem
+          border-bottom 0.2rem solid #fff
           &.nav-s
             border-color #1f8bee
             color #1f8bee
-    &.isFixed
-      position fixed
+    .nav-more-btn
+      position absolute
       top 0
+      right 0
+      width 4rem
+      height 4.4rem
+      box-shadow -0.1rem 0 1.5rem 0.5rem #fff
+      background url(./nav-more.png) no-repeat center
+      background-size 4rem 4rem
       background-color #fff
-      z-index 999
   .news-wrapper
     padding 0 2rem
-    box-sizing border-box
     overflow hidden
     background-color #fff
-    &.isFixed
-      padding-top 4.3rem
     .bottom-tip
       height 4rem
       line-height 4rem
@@ -194,5 +245,44 @@ export default {
     position absolute
     width 100%
     top 60%
+  .nav-more-wrapper
+    display flex
+    flex-direction column
+    justify-content space-between
+    position fixed
+    top 0
+    left 0
+    width 100%
+    height 100vh
+    background-color rgba(7,17,27,0.9)
+    backdrop-filter: blur(10px)
+    z-index 200
+    .title
+      height 4.92rem
+      line-height 4.92rem
+      font-size 1.6rem
+      border-1px(rgba(255,255,255,0.2))
+      text-align center
+      color #fff
+    .content
+      padding 0 1rem
+      box-sizing border-box
+      color #393a4c
+      .item
+        display inline-block
+        width 25.33%
+        height 2.8rem
+        line-height 2.8rem
+        vertical-align middle
+        margin 2.4rem 4% 0
+        border-radius 1.4rem
+        text-align center
+        background-color #f8f8f8
+    .close
+      width 4rem
+      height 4rem
+      margin 0 auto 7rem
+      background url(./icon-close.png) no-repeat center
+      background-size 4rem
 
 </style>
