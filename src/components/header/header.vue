@@ -6,7 +6,7 @@
       </router-link>
       <div class="nav">
         <router-link to="/index" class="nav-btn" active-class="nav-btn-s">资讯</router-link>
-        <router-link to="/about" class="nav-btn" active-class="nav-btn-s">关于</router-link>
+        <router-link to="/tool" class="nav-btn" active-class="nav-btn-s">工具</router-link>
       </div>
     </div>
   </div>

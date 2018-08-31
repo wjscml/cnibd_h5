@@ -23,8 +23,14 @@ const NewsDetail = (resolve) => {
   })
 }
 
+const Tool = (resolve) => {
+  import('../pages/tool/tool.vue').then((module) => {
+    resolve(module)
+  })
+}
+
 const Calculator = (resolve) => {
-  import('../pages/news-detail/calculator.vue').then((module) => {
+  import('../pages/tool/calculator.vue').then((module) => {
     resolve(module)
   })
 }
@@ -57,6 +63,13 @@ export default new Router({
       }
     },
     {
+      path: '/tool',
+      component: Tool,
+      meta: {
+        title: '赛恩财经——个税计算器'
+      }
+    },
+    {
       path: '/site/:id',
       component: NewsDetail
     },
@@ -65,7 +78,7 @@ export default new Router({
       redirect: '/index',
       component: Calculator,
       meta: {
-        title: '赛恩财经——个税计算器'
+        title: '赛恩财经:聚合财经新媒体'
       }
     },
     {
