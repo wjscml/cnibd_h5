@@ -1,4 +1,5 @@
 import wx from 'weixin-js-sdk'
+import {getApi} from '../../api/getApi.js'
 
 export function wxInit (sd) {
   let links = `${window.location.href}`
@@ -60,5 +61,24 @@ export function wxInit (sd) {
   })
   wx.error(function (res) {
     // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+  })
+}
+
+export function share () {
+  let url = encodeURIComponent(`${window.location.href}`)
+  getApi(`/sign?share_url=${url}`).then(res => {
+    if (res.data.errorCode === 0) {
+      wx.config({
+        debug: false,
+        appId: res.data.data.signPackage.appId,
+        timestamp: res.data.data.signPackage.timestamp,
+        nonceStr: res.data.data.signPackage.nonceStr,
+        signature: res.data.data.signPackage.signature,
+        jsApiList: [
+          'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'
+        ]
+      })
+      wxInit(res.data.data)
+    }
   })
 }

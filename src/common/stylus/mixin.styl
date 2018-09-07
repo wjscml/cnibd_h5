@@ -9,13 +9,15 @@ border-1px($color)
     border-top: 1px solid $color
     content: ''
 
-@keyframes loadingRotate
+.vip
+  width 2rem
+  height 2rem
+  background-position: left
+  background-repeat: no-repeat
+  background-size auto 2rem
+  animation: vip 1.5s steps(23) 1s infinite forwards
+@keyframes vip
   0%
-    -webkit-transform: rotate(0) translateZ(0)
-    transform: rotate(0) translateZ(0)
-  50%
-    -webkit-transform: rotate(180deg) translateZ(0)
-    transform: rotate(180deg) translateZ(0)
+    background-position: left
   100%
-    -webkit-transform: rotate(360deg) translateZ(0)
-    transform: rotate(360deg) translateZ(0)
+    background-position: right

@@ -1,20 +1,17 @@
 <template>
   <div id="news">
-    <div class="news-nav" ref="navWrapper" :class="{'isFixed':isFixed}" v-if="newsNav.length">
+    <scroll :data="newsNav" :scrollX="scrollX" :scrollY="scrollY" :eventPassthrough="eventPassthrough" class="news-nav" :class="{'isFixed':isFixed}" v-if="newsNav.length" ref="navScroll">
       <div class="nav-content" ref="navContent">
         <div class="nav-btn" v-for="(item, index) in newsNav" :key="index" @click="change(index)" ref="navBtn">
           <span :class="{'nav-s':type===index}">{{item.name}}</span>
         </div>
       </div>
       <div class="nav-more-btn" @click="showMoreTab"></div>
-    </div>
-    <div class="news-wrapper">
-      <div ref="newsWrapper">
-        <news-column :news="news" v-for="(item, index) in newsNav" :key="index" v-show="type===index"></news-column>
-      </div>
-      <div v-show="newsNav.length" class="bottom-tip" ref="bottomTip">
-        <img src="./loading.png" v-show="isLoad">
-        <span class="loading-hook">{{tips}}</span>
+    </scroll>
+    <div class="news-wrapper" ref="newsWrapper">
+      <news-column :class="{'isFixed':isFixed}" :news="news" v-for="(item, index) in newsNav" :key="index" v-show="type===index"></news-column>
+      <div ref="bottomTip">
+        <load-tips :tips="tips" :isLoad="isLoad" v-show="newsNav.length"></load-tips>
       </div>
     </div>
     <div class="loading-container" v-show="!newsNav.length">
@@ -35,8 +32,9 @@
 </template>
 <script>
 import {getApi} from '../../api/getApi.js'
-import BScroll from 'better-scroll'
+import Scroll from '../../components/scroll/scroll.vue'
 import NewsColumn from '../../components/news-column/news-column.vue'
+import LoadTips from '../../components/load-tips/load-tips.vue'
 import Loading from '../../components/loading/loading.vue'
 import Slider from '../../components/slider/slider.vue'
 
@@ -44,8 +42,10 @@ const ERR_OK = 0
 export default {
   components: {
     'news-column': NewsColumn,
+    'load-tips': LoadTips,
     'loading': Loading,
-    'slider': Slider
+    'slider': Slider,
+    'scroll': Scroll
   },
   data () {
     return {
@@ -56,7 +56,10 @@ export default {
       page: 0,
       tips: '上滑加载更多',
       isLoad: null,
-      isMoreTab: null
+      isMoreTab: null,
+      scrollX: true,
+      scrollY: false,
+      eventPassthrough: 'vertical'
     }
   },
   props: {
@@ -78,12 +81,12 @@ export default {
   },
   created () {
     this._getNews()
+    this._getNewsNav()
   },
   mounted () {
     setTimeout(() => {
-      this._getNewsNav()
-      window.addEventListener('scroll', this.loadMore)
-    }, 10)
+      window.addEventListener('touchend', this.loadMore)
+    }, 20)
   },
   methods: {
     _getNewsNav () {
@@ -96,13 +99,6 @@ export default {
               width += this.$refs.navBtn[i].getBoundingClientRect().width
             }
             this.$refs.navContent.style.width = width + 'px'
-            this.navScroll = new BScroll(this.$refs.navWrapper, {
-              startX: 0,
-              click: true,
-              scrollX: true,
-              scrollY: false,
-              eventPassthrough: 'vertical'
-            })
           })
         }
       })
@@ -147,6 +143,7 @@ export default {
           }
         })
       }
+      console.log(bottomTipHeight, windowHeight)
     },
     change (i) {
       this.type = i
@@ -155,8 +152,8 @@ export default {
       this.isMoreTab = false
     },
     scrollCenter (val) {
-      this.navScroll.scrollToElement(this.$refs.navBtn[val], 300, true, true)
-      this.navScroll.refresh()
+      this.$refs.navScroll.scrollToElement(this.$refs.navBtn[val], 300, true, true)
+      this.$refs.navScroll.refresh()
     },
     showMoreTab () {
       this.isMoreTab = true
@@ -230,19 +227,8 @@ export default {
     padding 0 2rem
     overflow hidden
     background-color #fff
-    .bottom-tip
-      height 4rem
-      line-height 4rem
-      text-align center
-      .loading-hook
-        font-size 1.2rem
-        color #757575
-      img
-        vertical-align middle
-        width 1.4rem
-        height 1.4rem
-        -webkit-animation: loadingRotate .4s linear infinite forwards
-        animation: loadingRotate .4s linear infinite forwards
+    .isFixed
+      margin-top 4.4rem
   .loading-container
     position absolute
     width 100%

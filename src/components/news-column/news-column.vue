@@ -1,7 +1,7 @@
 <template>
 <div class="news-column">
   <div class="news-item" v-for="(newsItem, index) in news" :key="index">
-    <a :href="newsItem.url"><div class="item-image"><img v-lazy="newsItem.thumb"></div></a>
+    <a :href="newsItem.url"><div class="item-image"><img v-lazy="newsItem.thumb" :key="newsItem.thumb"></div></a>
     <div class="item-txt">
       <a :href="newsItem.url"><h1 class="title">{{newsItem.title}}</h1></a>
       <p class="info">
@@ -15,31 +15,9 @@
 </template>
 
 <script>
-import BScroll from 'better-scroll'
-
 export default {
   props: {
     news: {}
-  },
-  mounted () {
-  },
-  methods: {
-    newsScroll () {
-      this.$nextTick(() => {
-        if (this.isFixed) {
-          this.sb = true
-          this.newsScroll = new BScroll(this.$refs.newsWrapper, {
-            click: true,
-            pullUpLoad: true
-          })
-          this.newsScroll.on('scrollEnd', () => {
-            if (this.newsScroll.y <= (this.newsScroll.maxScrollY + 50)) {
-              this.loadMore()
-            }
-          })
-        }
-      })
-    }
   }
 }
 </script>
@@ -49,7 +27,6 @@ export default {
 .news-column
   overflow hidden
   .news-item
-    float left
     display flex
     padding 1.2rem 0
     border-1px(rgba(7,17,27,0.1))

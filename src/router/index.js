@@ -17,6 +17,18 @@ const About = (resolve) => {
   })
 }
 
+const Columnist = (resolve) => {
+  import('../pages/columnist/columnist.vue').then((module) => {
+    resolve(module)
+  })
+}
+
+const Author = (resolve) => {
+  import('../pages/columnist-author/columnist-author.vue').then((module) => {
+    resolve(module)
+  })
+}
+
 const NewsDetail = (resolve) => {
   import('../pages/news-detail/news-detail.vue').then((module) => {
     resolve(module)
@@ -61,6 +73,19 @@ export default new Router({
       meta: {
         title: '赛恩财经——关于我们'
       }
+    },
+    {
+      path: '/columnist',
+      component: Columnist,
+      meta: {
+        title: '赛恩财经——专栏作者'
+      },
+      children: [
+        {
+          path: ':id',
+          component: Author
+        }
+      ]
     },
     {
       path: '/tool',

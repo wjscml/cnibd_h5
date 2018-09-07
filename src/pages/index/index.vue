@@ -44,6 +44,8 @@ export default {
       getApi('/slide').then(res => {
         if (res.data.errorCode === ERR_OK) {
           this.slide = res.data.data
+        } else {
+          this.slide = []
         }
       })
     },
@@ -96,7 +98,6 @@ export default {
     overflow: hidden
     .slider-group
       overflow: hidden
-      height 18rem
       .slider-item
         position relative
         float: left
