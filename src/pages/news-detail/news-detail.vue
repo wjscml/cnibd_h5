@@ -42,7 +42,6 @@ export default {
         if (res.data.errorCode === ERR_OK) {
           this.newsDetails = res.data.data
           this.newsContent = addTableBox(res.data.data.content)
-          console.log(this.newsDetails)
           wx.config({
             debug: false,
             appId: this.newsDetails.signPackage.appId,

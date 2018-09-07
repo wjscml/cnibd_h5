@@ -18,8 +18,7 @@
 import Slider from '../../components/slider/slider.vue'
 import News from '../../components/news/news.vue'
 import {getApi} from '../../api/getApi.js'
-import wx from 'weixin-js-sdk'
-import {wxInit} from '../../common/js/share.js'
+import {share} from '../../common/js/share.js'
 
 const ERR_OK = 0
 export default {
@@ -27,16 +26,21 @@ export default {
     return {
       slide: [],
       isFixed: null,
-      navTop: 0
+      navTop: 0,
+      shareVal: {
+        title: '赛恩财经:聚合财经新媒体',
+        summary: '赛恩财经，提供全球股票,外汇,期货,债券,基金和数字货币等数十万种金融投资产品的实时行情和新闻资讯,以及多种投资工具。',
+        thumb: 'https://cnibd.oss-cn-beijing.aliyuncs.com/resource/images/sharelogo.png'
+      }
     }
   },
   created () {
     this.httpGet()
   },
   mounted () {
+    share(this.shareVal)
     setTimeout(() => {
       window.addEventListener('scroll', this.handleScroll)
-      this.share()
     }, 20)
   },
   methods: {
@@ -59,24 +63,6 @@ export default {
     },
     _getNewsNavtop () {
       this.navTop = this.$refs.newsWrapper.getBoundingClientRect().top
-    },
-    share () {
-      let url = encodeURIComponent(`${window.location.href}`)
-      getApi(`/sign?share_url=${url}`).then(res => {
-        if (res.data.errorCode === ERR_OK) {
-          wx.config({
-            debug: false,
-            appId: res.data.data.signPackage.appId,
-            timestamp: res.data.data.signPackage.timestamp,
-            nonceStr: res.data.data.signPackage.nonceStr,
-            signature: res.data.data.signPackage.signature,
-            jsApiList: [
-              'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'
-            ]
-          })
-          wxInit(res.data.data)
-        }
-      })
     }
   },
   components: {

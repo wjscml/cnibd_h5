@@ -46,7 +46,8 @@ export default {
       tips: '上滑加载更多',
       isLoad: null,
       scrollY: 0,
-      isScrollTop: null
+      isScrollTop: null,
+      shareVal: {}
     }
   },
   components: {
@@ -60,7 +61,7 @@ export default {
     ])
   },
   mounted () {
-    share()
+    share(this.shareVal)
   },
   created () {
     this.probeType = 3
@@ -83,6 +84,11 @@ export default {
             this.$refs.list.$el.style.top = `${this.topHeight}px`
           })
           this.news = res.data.data.publishArticles
+
+          this.shareVal.title = this.authorInfo.nickname
+          this.shareVal.summary = this.authorInfo.description
+          this.shareVal.thumb = this.authorInfo.avatar
+          share(this.shareVal)
         } else {
           this.tips = '暂无数据'
         }
@@ -107,7 +113,12 @@ export default {
       })
     },
     back () {
-      this.$router.back()
+      if (window.history.length <= 1) {
+        this.$router.push({path: '/columnist'})
+        return false
+      } else {
+        this.$router.back()
+      }
     },
     scroll (pos) {
       this.scrollY = pos.y

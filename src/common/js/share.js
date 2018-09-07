@@ -64,7 +64,7 @@ export function wxInit (sd) {
   })
 }
 
-export function share () {
+export function share (val) {
   let url = encodeURIComponent(`${window.location.href}`)
   getApi(`/sign?share_url=${url}`).then(res => {
     if (res.data.errorCode === 0) {
@@ -78,7 +78,8 @@ export function share () {
           'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'
         ]
       })
-      wxInit(res.data.data)
+      console.log(res.data.data)
+      wxInit(val)
     }
   })
 }
