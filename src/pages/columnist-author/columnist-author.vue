@@ -239,7 +239,6 @@ export default {
       padding-bottom 4rem
   .load-tips
     margin-top -4rem
-    background-color red
 .slide-enter-active,.slide-leave-active
   transition all .3s
 .slide-enter,.slide-leave
