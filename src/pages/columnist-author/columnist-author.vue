@@ -23,7 +23,6 @@
         <news-column :news="news" class="news-column"></news-column>
         <load-tips :tips="tips" :isLoad="isLoad" v-show="news.length" class="load-tips"></load-tips>
       </scroll>
-
     </div>
   </transition>
 </template>
@@ -75,6 +74,7 @@ export default {
     },
     _getAuthor () {
       getApi(`/author-publish?page=0&author_id=${this.$route.params.id}`).then(res => {
+        console.log(res)
         if (res.data.errorCode === ERR_OK) {
           this.authorInfo = res.data.data.userInfo
           this.$nextTick(() => {
@@ -90,7 +90,8 @@ export default {
           this.shareVal.thumb = this.authorInfo.avatar
           share(this.shareVal)
         } else {
-          this.tips = '暂无数据'
+          this.authorInfo = this.author
+          this.tips = '暂未发表文章'
         }
       }).catch(error => {
         if (!error.res) {

@@ -4,13 +4,16 @@
         <h1 class="article-title">{{newsDetails.title}}</h1>
         <div class="article-info">
             <div class="author">
-                <span class="avatar"><img :src="newsDetails.author_avatar" alt="avatar"></span>
+                <span class="avatar"><img :src="newsDetails.author_avatar" @load="loadAvatar"></span>
                 <span class="name">{{newsDetails.author_name}}</span>
             </div>
             <div class="time">{{newsDetails.publish_time}}</div>
         </div>
     </div>
     <div class="article-content" v-html="newsContent">
+    </div>
+    <div class="loading-container" v-show="isLoading">
+      <loading></loading>
     </div>
   </div>
 </template>
@@ -20,14 +23,19 @@ import wx from 'weixin-js-sdk'
 import {wxInit} from '../../common/js/share.js'
 import {getApi} from '../../api/getApi.js'
 import {addTableBox} from '../../common/js/htmlUtil.js'
+import Loading from '../../components/loading/loading.vue'
 
 const ERR_OK = 0
 export default {
   data () {
     return {
-      newsDetails: [],
-      newsContent: ''
+      newsDetails: {},
+      newsContent: '',
+      isLoading: true
     }
+  },
+  components: {
+    'loading': Loading
   },
   created () {
   },
@@ -55,6 +63,9 @@ export default {
           wxInit(this.newsDetails)
         }
       })
+    },
+    loadAvatar () {
+      this.isLoading = false
     }
   }
 }
@@ -63,6 +74,7 @@ export default {
 <style lang="stylus">
 .article
   padding: 0 2rem
+  min-height 100vh
   background-color #fff
   .article-header
     padding 3rem 0
@@ -131,4 +143,5 @@ export default {
         border-radius: 8px
         border: 3px solid #fff
         background-color: rgba(0, 0, 0, .3)
+
 </style>

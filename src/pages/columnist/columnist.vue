@@ -10,11 +10,13 @@
         <p class="intro">{{item.description}}</p>
       </div>
     </div>
+    <load-tips :tips="tips" :isLoad="isLoad"></load-tips>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
+import LoadTips from '../../components/load-tips/load-tips.vue'
 import {getApi} from '../../api/getApi.js'
 import {share} from '../../common/js/share.js'
 import {mapMutations} from 'vuex'
@@ -24,6 +26,9 @@ export default {
   data () {
     return {
       columnist: [],
+      tips: '上滑加载更多',
+      isLoad: null,
+      page: 0,
       shareVal: {
         title: '赛恩财经——专栏作家',
         summary: '赛恩财经，提供全球股票,外汇,期货,债券,基金和数字货币等数十万种金融投资产品的实时行情和新闻资讯,以及多种投资工具。',
@@ -31,11 +36,17 @@ export default {
       }
     }
   },
+  components: {
+    'load-tips': LoadTips
+  },
   created () {
     this.getColumnist()
   },
   mounted () {
     share(this.shareVal)
+    setTimeout(() => {
+      window.onscroll = this.loadMore
+    }, 20)
   },
   methods: {
     getColumnist () {
@@ -44,6 +55,28 @@ export default {
           this.columnist = res.data.data
         }
       })
+    },
+    loadMore () {
+      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+      var windowHeight = document.documentElement.clientHeight || document.body.clientHeight
+      var scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight
+      if (scrollTop + windowHeight === scrollHeight) {
+        this.page++
+        getApi(`/author-list?page=${this.page}`).then((res) => {
+          if (res.data.errorCode === ERR_OK) {
+            this.columnist = this.columnist.concat(res.data.data)
+            this.tips = '正在加载'
+            this.isLoad = true
+          } else {
+            this.tips = '没有更多数据了~'
+            this.isLoad = false
+          }
+        }).catch(error => {
+          if (!error.res) {
+            this.tips = '网络不给力，请稍后重试'
+          }
+        })
+      }
     },
     selectAuthor (author) {
       this.$router.push({
@@ -93,15 +126,19 @@ export default {
         font-size 1.8rem
         font-weight 600
         color #393a4c
+        overflow hidden
+        text-overflow ellipsis
+        display -webkit-box
+        -webkit-line-clamp 1
+        -webkit-box-orient vertical
       .intro
         height 3.6rem
         line-height 1.8rem
         font-size 1.2rem
         color #999
-        display -webkit-box
         overflow hidden
-        -webkit-line-clamp 2
         text-overflow ellipsis
+        display -webkit-box
+        -webkit-line-clamp 2
         -webkit-box-orient vertical
-
 </style>

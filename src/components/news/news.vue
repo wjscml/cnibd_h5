@@ -56,10 +56,7 @@ export default {
       page: 0,
       tips: '上滑加载更多',
       isLoad: null,
-      isMoreTab: null,
-      scrollX: true,
-      scrollY: false,
-      eventPassthrough: 'vertical'
+      isMoreTab: null
     }
   },
   props: {
@@ -71,7 +68,6 @@ export default {
       this.scrollTop()
     },
     isMoreTab (curVal, oldVal) {
-      console.log(curVal, oldVal)
       if (curVal === true) {
         this.stop()
       } else {
@@ -80,12 +76,15 @@ export default {
     }
   },
   created () {
+    this.scrollX = true
+    this.scrollY = false
+    this.eventPassthrough = 'vertical'
     this._getNews()
     this._getNewsNav()
   },
   mounted () {
     setTimeout(() => {
-      window.addEventListener('touchend', this.loadMore)
+      window.onscroll = this.loadMore
     }, 20)
   },
   methods: {
@@ -124,9 +123,10 @@ export default {
       }
     },
     loadMore () {
+      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop
       var windowHeight = document.documentElement.clientHeight || document.body.clientHeight
-      var bottomTipHeight = this.$refs.bottomTip.getBoundingClientRect().top
-      if (bottomTipHeight < windowHeight) {
+      var scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight
+      if (scrollTop + windowHeight === scrollHeight) {
         this.page++
         getApi(`/list?page=${this.page}&type=${this.type}`).then((res) => {
           if (res.data.errorCode === ERR_OK) {
@@ -143,7 +143,6 @@ export default {
           }
         })
       }
-      console.log(bottomTipHeight, windowHeight)
     },
     change (i) {
       this.type = i

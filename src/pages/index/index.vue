@@ -10,6 +10,7 @@
         </div>
       </slider>
     </div>
+    <div ref="newsMark"></div>
     <v-news :isFixed="isFixed"></v-news>
   </div>
 </template>
@@ -48,6 +49,9 @@ export default {
       getApi('/slide').then(res => {
         if (res.data.errorCode === ERR_OK) {
           this.slide = res.data.data
+          this.$nextTick(() => {
+            this.navTop = this.$refs.newsMark.getBoundingClientRect().top
+          })
         } else {
           this.slide = []
         }
@@ -55,14 +59,11 @@ export default {
     },
     handleScroll () {
       var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
-      if (scrollTop >= 240) {
+      if (scrollTop > this.navTop) {
         this.isFixed = true
       } else {
         this.isFixed = false
       }
-    },
-    _getNewsNavtop () {
-      this.navTop = this.$refs.newsWrapper.getBoundingClientRect().top
     }
   },
   components: {
