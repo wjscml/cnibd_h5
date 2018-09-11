@@ -10,7 +10,7 @@
         <p class="intro">{{item.description}}</p>
       </div>
     </div>
-    <load-tips :tips="tips" :isLoad="isLoad"></load-tips>
+    <load-tips v-show="columnist.length" :tips="tips" :isLoad="isLoad"></load-tips>
     <router-view></router-view>
   </div>
 </template>
