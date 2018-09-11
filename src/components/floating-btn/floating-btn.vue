@@ -1,7 +1,7 @@
 <template>
   <div class="floating-wrapper" v-show="isShow">
     <div class="floating-btn">
-      <transition name="slide">
+      <transition name="btn">
         <div class="bg-layer" v-show="!isClose">
           <div class="item home-btn" @click="goHome"></div>
           <div class="item last-btn" @click="goLast"></div>
@@ -101,10 +101,10 @@ export default {
           background-image url(./last.png)
         &.next-btn
           background-image url(./next.png)
-    .slide-transition
-      opacity 1
+    .btn-transition
       width 100%
-    .slide-enter,.slide-leave
+      opacity 1
+    .btn-enter,.btn-leave
       width 4.6rem
       opacity 0.5
     .add-btn
