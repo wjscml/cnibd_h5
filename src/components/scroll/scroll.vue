@@ -13,6 +13,14 @@ export default {
       type: Number,
       default: 1
     },
+    scrollX: {
+      type: Boolean,
+      default: false
+    },
+    scrollY: {
+      type: Boolean,
+      default: true
+    },
     click: {
       type: Boolean,
       default: true
@@ -37,17 +45,13 @@ export default {
       type: Number,
       default: 20
     },
-    eventPassthrough: {
-      type: String,
-      default: ''
-    },
-    scrollX: {
+    freeScroll: {
       type: Boolean,
       default: false
     },
-    scrollY: {
-      type: Boolean,
-      default: true
+    eventPassthrough: {
+      type: String,
+      default: ''
     }
   },
   mounted () {
@@ -63,8 +67,8 @@ export default {
       this.scroll = new BScroll(this.$refs.wrapper, {
         probeType: this.probeType,
         click: this.click,
-        scrollX: this.scrollX,
         scrollY: this.scrollY,
+        scrollX: this.scrollX,
         eventPassthrough: this.eventPassthrough
       })
       if (this.listenScroll || this.pullUpLoad) {
@@ -75,8 +79,13 @@ export default {
       }
       if (this.pullUpLoad) {
         this.scroll.on('scrollEnd', () => {
-          if (this.scroll.y <= (this.scroll.maxScrollY + 70)) {
+          if (this.scroll.y <= this.scroll.maxScrollY) {
             this.$emit('scrollToEnd')
+          }
+        })
+        this.scroll.on('touchEnd', () => {
+          if (this.scroll.y <= this.scroll.maxScrollY - 50) {
+            this.$emit('touchToEnd')
           }
         })
       }

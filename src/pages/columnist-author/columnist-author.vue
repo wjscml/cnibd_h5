@@ -19,9 +19,9 @@
         </div>
       </div>
       <div class="bg-layer" ref="layer"></div>
-      <scroll @scroll="scroll" @scrollToEnd="scrollToEnd" :data="news" :pullUpLoad="pullUpLoad" :probeType="probeType" :listenScroll="listenScroll" class="list" ref="list">
+      <scroll @scroll="scroll" @touchToEnd="touchToEnd" :data="news" :pullUpLoad="pullUpLoad" :probeType="probeType" :listenScroll="listenScroll" class="list" ref="list">
         <news-column :news="news" class="news-column"></news-column>
-        <load-tips :tips="tips" :isLoad="isLoad" v-show="news.length" class="load-tips"></load-tips>
+        <load-tips :tips="tips" :isLoad="isLoad" class="load-tips"></load-tips>
       </scroll>
     </div>
   </transition>
@@ -60,9 +60,9 @@ export default {
     ])
   },
   mounted () {
-    share(this.shareVal)
   },
   created () {
+    this.direction = 'horizontal'
     this.probeType = 3
     this.listenScroll = true
     this.pullUpLoad = true
@@ -102,6 +102,8 @@ export default {
     loadMore () {
       getApi(`/author-publish?page=${this.page}&author_id=${this.$route.params.id}`).then(res => {
         if (res.data.errorCode === ERR_OK) {
+          this.tips = '正在加载...'
+          this.isLoad = true
           this.news = this.news.concat(res.data.data.publishArticles)
         } else {
           this.tips = '没有更多数据了~'
@@ -124,8 +126,7 @@ export default {
     scroll (pos) {
       this.scrollY = pos.y
     },
-    scrollToEnd () {
-      console.log('123')
+    touchToEnd () {
       this.page++
       this.loadMore()
     }
@@ -248,9 +249,13 @@ export default {
     margin-top 1rem
     .news-column
       padding 0 2rem
-      padding-bottom 4rem
-  .load-tips
-    margin-top -4rem
+      background-color #fff
+    .load-tips
+      position absolute
+      z-index -1
+      bottom 0
+      left 0
+      width 100%
 .slide-enter-active,.slide-leave-active
   transition all .3s
 .slide-enter,.slide-leave

@@ -1,5 +1,5 @@
 <template>
-  <div class="article" v-wechat-title="newsDetails.title">
+  <div class="article" v-wechat-title="newsDetails.title" ref="article">
     <div class="article-header">
         <h1 class="article-title">{{newsDetails.title}}</h1>
         <div class="article-info">
@@ -15,15 +15,16 @@
     <div class="loading-container" v-show="isLoading">
       <loading></loading>
     </div>
+    <floating-btn :isShow="isShow" @gotop="gotop" @gonext="gonext" @golast="golast"></floating-btn>
   </div>
 </template>
 
 <script>
-import wx from 'weixin-js-sdk'
-import {wxInit} from '../../common/js/share.js'
+import {share} from '../../common/js/share.js'
 import {getApi} from '../../api/getApi.js'
 import {addTableBox} from '../../common/js/htmlUtil.js'
 import Loading from '../../components/loading/loading.vue'
+import FloatingBtn from '../../components/floating-btn/floating-btn.vue'
 
 const ERR_OK = 0
 export default {
@@ -31,41 +32,65 @@ export default {
     return {
       newsDetails: {},
       newsContent: '',
-      isLoading: true
+      isLoading: true,
+      isShow: true
     }
   },
   components: {
-    'loading': Loading
+    'loading': Loading,
+    'floating-btn': FloatingBtn
   },
   created () {
+    this.httpGet()
   },
   mounted () {
-    this.httpGet()
+    setTimeout(() => {
+      var scrollTimer
+      window.addEventListener('scroll', () => {
+        this.isShow = false
+        clearTimeout(scrollTimer)
+        scrollTimer = setTimeout(this.showFloating, 400)
+      })
+    }, 20)
   },
   methods: {
     httpGet () {
-      let url = encodeURIComponent(`${window.location.href}`)
-      getApi(`/detail-share?article_id=${this.$route.params.id}&share_url=${url}`).then(res => {
-        console.log(window.location.pathname)
+      getApi(`/detail?article_id=${this.$route.params.id}`).then(res => {
+        console.log(window.location.pathname, res)
         if (res.data.errorCode === ERR_OK) {
           this.newsDetails = res.data.data
           this.newsContent = addTableBox(res.data.data.content)
-          wx.config({
-            debug: false,
-            appId: this.newsDetails.signPackage.appId,
-            timestamp: this.newsDetails.signPackage.timestamp,
-            nonceStr: this.newsDetails.signPackage.nonceStr,
-            signature: this.newsDetails.signPackage.signature,
-            jsApiList: [
-              'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'
-            ]
-          })
-          wxInit(this.newsDetails)
+          share(this.newsDetails)
         }
       })
     },
     loadAvatar () {
       this.isLoading = false
+    },
+    gotop () {
+      this.$refs.article.scrollIntoView()
+    },
+    gonext () {
+      if (this.newsDetails.article_after.length === 0) {
+        alert('已经是最后一篇文章啦~')
+      } else {
+        this.$router.push({path: `/site/${this.newsDetails.article_after.id}`})
+      }
+    },
+    golast () {
+      if (this.newsDetails.article_before.length === 0) {
+        alert('已经是第一篇文章啦~')
+      } else {
+        this.$router.push(`/site/${this.newsDetails.article_before.id}`)
+      }
+    },
+    showFloating () {
+      this.isShow = true
+    }
+  },
+  watch: {
+    '$route' (to, from) {
+      this.httpGet()
     }
   }
 }
@@ -143,5 +168,4 @@ export default {
         border-radius: 8px
         border: 3px solid #fff
         background-color: rgba(0, 0, 0, .3)
-
 </style>
