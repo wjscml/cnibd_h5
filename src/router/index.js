@@ -58,7 +58,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/index/0'
+      redirect: '/index'
     },
     {
       path: '/index',
