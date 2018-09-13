@@ -19,10 +19,10 @@
         </div>
       </div>
       <div class="bg-layer" ref="layer"></div>
-      <scroll @scroll="scroll" @touchToEnd="touchToEnd" :data="news" :pullUpLoad="pullUpLoad" :probeType="probeType" :listenScroll="listenScroll" class="list" ref="list">
+      <scroll @scroll="scroll" @touchToEnd="touchToEnd" @scrollToEnd="scrollToEnd" :data="news" :pullUpLoad="pullUpLoad" :probeType="probeType" :listenScroll="listenScroll" class="list" ref="list">
         <news-column :news="news" class="news-column"></news-column>
-        <load-tips :tips="tips" :isLoad="isLoad" class="load-tips"></load-tips>
       </scroll>
+      <load-tips v-if="news.length" :tips="tips" :isLoad="isLoad" class="load-tips"></load-tips>
     </div>
   </transition>
 </template>
@@ -74,7 +74,6 @@ export default {
     },
     _getAuthor () {
       getApi(`/author-publish?page=0&author_id=${this.$route.params.id}`).then(res => {
-        console.log(res)
         if (res.data.errorCode === ERR_OK) {
           this.authorInfo = res.data.data.userInfo
           this.$nextTick(() => {
@@ -100,11 +99,14 @@ export default {
       })
     },
     loadMore () {
+      this.tips = '正在加载...'
+      this.isLoad = true
+      this.page++
       getApi(`/author-publish?page=${this.page}&author_id=${this.$route.params.id}`).then(res => {
         if (res.data.errorCode === ERR_OK) {
-          this.tips = '正在加载...'
-          this.isLoad = true
           this.news = this.news.concat(res.data.data.publishArticles)
+          this.tips = '上滑加载更多'
+          this.isLoad = false
         } else {
           this.tips = '没有更多数据了~'
           this.isLoad = false
@@ -124,10 +126,13 @@ export default {
       }
     },
     scroll (pos) {
+      console.log(pos)
       this.scrollY = pos.y
     },
+    scrollToEnd () {
+
+    },
     touchToEnd () {
-      this.page++
       this.loadMore()
     }
   },
@@ -239,23 +244,23 @@ export default {
         height 100%
   .bg-layer
     position relative
-    height 100%
+    height 70%
     background-color #fff
   .list
     position fixed
     top 0
-    bottom 0
+    bottom 4rem
     width 100%
     margin-top 1rem
     .news-column
       padding 0 2rem
       background-color #fff
-    .load-tips
-      position absolute
-      z-index -1
-      bottom 0
-      left 0
-      width 100%
+  .load-tips
+    position absolute
+    z-index -1
+    bottom 0
+    left 0
+    width 100%
 .slide-enter-active,.slide-leave-active
   transition all .3s
 .slide-enter,.slide-leave

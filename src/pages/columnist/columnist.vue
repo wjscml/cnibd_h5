@@ -11,12 +11,14 @@
       </div>
     </div>
     <load-tips v-show="columnist.length" :tips="tips" :isLoad="isLoad"></load-tips>
+    <loading v-show="!columnist.length" class="loading-container"></loading>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
 import LoadTips from '../../components/load-tips/load-tips.vue'
+import Loading from '../../components/loading/loading.vue'
 import {getApi} from '../../api/getApi.js'
 import {share} from '../../common/js/share.js'
 import {mapMutations} from 'vuex'
@@ -37,7 +39,8 @@ export default {
     }
   },
   components: {
-    'load-tips': LoadTips
+    'load-tips': LoadTips,
+    'loading': Loading
   },
   created () {
     this.getColumnist()
@@ -45,7 +48,7 @@ export default {
   mounted () {
     share(this.shareVal)
     setTimeout(() => {
-      window.onscroll = this.loadMore
+      window.addEventListener('scroll', this.loadMore)
     }, 20)
   },
   methods: {
@@ -87,6 +90,9 @@ export default {
     ...mapMutations({
       setAuthor: 'SET_AUTHOR'
     })
+  },
+  destroyed () {
+    window.removeEventListener('scroll', this.loadMore)
   }
 }
 </script>

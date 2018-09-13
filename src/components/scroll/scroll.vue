@@ -9,6 +9,10 @@ import BScroll from 'better-scroll'
 
 export default {
   props: {
+    data: {
+      type: Array,
+      default: null
+    },
     probeType: {
       type: Number,
       default: 1
@@ -21,6 +25,10 @@ export default {
       type: Boolean,
       default: true
     },
+    eventPassthrough: {
+      type: String,
+      default: ''
+    },
     click: {
       type: Boolean,
       default: true
@@ -29,16 +37,12 @@ export default {
       type: Boolean,
       default: false
     },
-    data: {
-      type: Array,
-      default: null
-    },
     pullUpLoad: {
       type: Boolean,
       default: false
     },
-    beforeScroll: {
-      type: Boolean,
+    pullDownRefresh: {
+      type: null,
       default: false
     },
     refreshDelay: {
@@ -48,10 +52,11 @@ export default {
     freeScroll: {
       type: Boolean,
       default: false
-    },
-    eventPassthrough: {
-      type: String,
-      default: ''
+    }
+  },
+  data () {
+    return {
+      tips: '下拉刷新'
     }
   },
   mounted () {
@@ -84,8 +89,24 @@ export default {
           }
         })
         this.scroll.on('touchEnd', () => {
-          if (this.scroll.y <= this.scroll.maxScrollY - 50) {
+          if (this.scroll.y <= this.scroll.maxScrollY - 40) {
             this.$emit('touchToEnd')
+          }
+        })
+      }
+      if (this.pullDownRefresh) {
+        let flag = true
+        this.scroll.on('scroll', (pos) => {
+          if (pos.y > 50 && flag) {
+            flag = false
+            this.$emit('scrollToTop')
+          } else if (pos.y === 0) {
+            flag = true
+          }
+        })
+        this.scroll.on('touchEnd', (pos) => {
+          if (pos.y > 50) {
+            this.$emit('pullingDown')
           }
         })
       }
@@ -99,20 +120,28 @@ export default {
     refresh () {
       this.scroll && this.scroll.refresh()
     },
+    scrollTo () {
+      this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
+    },
     scrollToElement () {
       this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
+    },
+    destroy () {
+      this.scroll.destroy()
     }
   },
   watch: {
     data () {
       setTimeout(() => {
         this.refresh()
-      }, 20)
+      }, this.refreshDelay)
     }
   }
 }
 </script>
 
-<style>
+<style lang="stylus">
+.pulldown-tips
+  width 100%
 
 </style>

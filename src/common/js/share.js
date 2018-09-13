@@ -78,7 +78,6 @@ export function share (val) {
           'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'
         ]
       })
-      console.log(res.data.data)
       wxInit(val)
     }
   })

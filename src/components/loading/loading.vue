@@ -20,6 +20,7 @@ export default {
 .loading
   width: 100%
   text-align: center
+  margin-top 25%
   img
     width 24px
     height 24px
