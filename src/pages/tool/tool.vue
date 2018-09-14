@@ -104,7 +104,7 @@ export default {
     grsds () {
       let sl = 0
       let sskcs = 0
-      let basIncom = this.bfoRes - 3500
+      let basIncom = this.bfoRes - 5000
       if (basIncom <= 0) {
         return 0
       }
