@@ -35,6 +35,12 @@ const NewsDetail = (resolve) => {
   })
 }
 
+const Search = (resolve) => {
+  import('../pages/search/search.vue').then((module) => {
+    resolve(module)
+  })
+}
+
 const Tool = (resolve) => {
   import('../pages/tool/tool.vue').then((module) => {
     resolve(module)
@@ -86,6 +92,13 @@ export default new Router({
           component: Author
         }
       ]
+    },
+    {
+      path: '/search',
+      component: Search,
+      meta: {
+        title: '赛恩财经——关于我们'
+      }
     },
     {
       path: '/tool',

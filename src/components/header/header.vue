@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="top-wrapper">
-      <router-link to="/index" tag="div" class="logo">
+      <router-link to="/tool" tag="div" class="logo">
         <img src="./logo.png" alt="logo">
       </router-link>
       <div class="nav">
@@ -25,8 +25,8 @@ export default {
           link: '/columnist'
         },
         {
-          name: '工具',
-          link: '/tool'
+          name: '搜索',
+          link: '/search'
         }
       ]
     }
