@@ -126,7 +126,6 @@ export default {
       }
     },
     scroll (pos) {
-      console.log(pos)
       this.scrollY = pos.y
     },
     scrollToEnd () {
