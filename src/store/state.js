@@ -1,5 +1,8 @@
+import {loadSearch} from '../common/js/cache'
+
 const state = {
-  author: {}
+  author: {},
+  searchHistory: loadSearch()
 }
 
 export default state

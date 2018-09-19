@@ -97,7 +97,7 @@ export default new Router({
       path: '/search',
       component: Search,
       meta: {
-        title: '赛恩财经——关于我们'
+        title: '赛恩财经——搜索'
       }
     },
     {

@@ -1,6 +1,6 @@
 <template>
   <div class="loading">
-    <img src="./loading.gif">
+    <img v-show="hasGif" src="./loading.gif">
     <p class="desc">{{title}}</p>
   </div>
 </template>
@@ -11,6 +11,10 @@ export default {
     title: {
       type: String,
       default: '正在载入...'
+    },
+    hasGif: {
+      type: Boolean,
+      default: true
     }
   }
 }

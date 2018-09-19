@@ -19,10 +19,13 @@
         </div>
       </div>
       <div class="bg-layer" ref="layer"></div>
-      <scroll @scroll="scroll" @touchToEnd="touchToEnd" @scrollToEnd="scrollToEnd" :data="news" :pullUpLoad="pullUpLoad" :probeType="probeType" :listenScroll="listenScroll" class="list" ref="list">
-        <news-column :news="news" class="news-column"></news-column>
+      <scroll @scroll="scroll" @touchToEnd="touchToEnd" :data="news" :pullUpLoad="pullUpLoad" :probeType="probeType" :listenScroll="listenScroll" class="list" ref="list">
+        <div>
+          <news-column :news="news" class="news-column"></news-column>
+          <load-tips v-if="news.length" :tips="tips" :isLoad="isLoad"></load-tips>
+        </div>
       </scroll>
-      <load-tips v-if="news.length" :tips="tips" :isLoad="isLoad" class="load-tips"></load-tips>
+
     </div>
   </transition>
 </template>
@@ -127,9 +130,6 @@ export default {
     },
     scroll (pos) {
       this.scrollY = pos.y
-    },
-    scrollToEnd () {
-
     },
     touchToEnd () {
       this.loadMore()
@@ -248,18 +248,12 @@ export default {
   .list
     position fixed
     top 0
-    bottom 4rem
+    bottom 0
     width 100%
     margin-top 1rem
     .news-column
       padding 0 2rem
       background-color #fff
-  .load-tips
-    position absolute
-    z-index -1
-    bottom 0
-    left 0
-    width 100%
 .slide-enter-active,.slide-leave-active
   transition all .3s
 .slide-enter,.slide-leave

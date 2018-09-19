@@ -1,1 +1,3 @@
 export const SET_AUTHOR = 'SET_AUTHOR'
+
+export const SET_SEARCH_HISTORY = 'SET_SEARCH_HISTORY'

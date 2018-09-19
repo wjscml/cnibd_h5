@@ -28,7 +28,7 @@
         <load-tips :tips="downTips" class="pulldown-tips"></load-tips>
       </div>
     </scroll>
-    <loading v-show="!news.length" class="loading-container" :title="''"></loading>
+    <loading v-show="!news.length" :title="''"></loading>
     <transition name="fade">
       <div class="nav-more-wrapper" v-show="isMoreTab">
         <div>
@@ -301,8 +301,6 @@ export default {
       position absolute
       top -4rem
       left 0
-.loading-container
-  margin-top 25%
 .nav-more-wrapper
   display flex
   flex-direction column

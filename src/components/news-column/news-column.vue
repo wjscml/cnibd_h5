@@ -1,9 +1,9 @@
 <template>
 <div class="news-column">
   <div class="news-item" v-for="(newsItem, index) in news" :key="index">
-    <a :href="newsItem.url"><div class="item-image"><img v-lazy="newsItem.thumb" :key="newsItem.thumb"></div></a>
+    <a :href="`/site/${newsItem.id}`"><div class="item-image"><img v-lazy="newsItem.thumb" :key="newsItem.thumb"></div></a>
     <div class="item-txt">
-      <a :href="newsItem.url"><h1 class="title">{{newsItem.title}}</h1></a>
+      <a :href="`/site/${newsItem.id}`"><h1 class="title">{{newsItem.title}}</h1></a>
       <p class="info">
         <span class="author">{{newsItem.author_name}}</span>
         <span>·</span>

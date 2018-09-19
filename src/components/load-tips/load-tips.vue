@@ -26,6 +26,7 @@ export default {
     -webkit-transform: rotate(360deg) translateZ(0)
     transform: rotate(360deg) translateZ(0)
 .bottom-tip
+  width 100%
   height 4rem
   line-height 4rem
   text-align center

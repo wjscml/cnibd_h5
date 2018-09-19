@@ -1,19 +1,257 @@
 <template>
   <div class="search">
-    <search-box></search-box>
+    <div class="search-box-wrapper">
+      <search-box ref="searchBox" @query="onQueryChange" @focus="onFocus"></search-box>
+      <div class="smart-box" v-show="query && !ensure">
+        <div class="smart-box-wrapper">
+          <p class="ensure-wrapper" @click="addQuery(query)">搜索“{{query}}”</p>
+        </div>
+      </div>
+    </div>
+    <div class="shortcut-wrapper" v-show="!query">
+      <scroll :data="shortcut" class="shortcut" ref="shortcut">
+        <div>
+          <div class="hot-key">
+            <h1 class="title">热门搜索</h1>
+            <ul>
+              <li @click="addQuery(item.name)" class="item" v-for="(item, index) in hotKey" :key="index">
+                <span>{{item.name}}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="search-history" v-show="searchHistory.length">
+            <h1 class="title">
+              <span class="text">搜索历史</span>
+              <span class="clear" @click="showConfirm">
+                <i class="icon-clear"></i>
+              </span>
+            </h1>
+            <div class="search-list">
+              <ul>
+                <li @click="addQuery(item)" class="search-item" v-for="item in searchHistory" :key="item">
+                  <i class="sign"></i>
+                  <span class="text">{{item}}</span>
+                  <span class="icon" @click.stop="deleteSearchHistory(item)">
+                    <i class="icon-delete"></i>
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </scroll>
+    </div>
+    <div class="search-result" v-show="ensure">
+      <suggest @select="saveSearch" :query="query" :ensure="ensure"></suggest>
+    </div>
+    <confirm @confirm="clearSearchHistory" text="是否清空所有搜索历史" ref="confirm"></confirm>
   </div>
 </template>
 
 <script>
+import Scroll from '../../components/scroll/scroll'
 import SearchBox from '../../components/search-box/search-box'
+import Suggest from '../../components/suggest/suggest'
+import Confirm from '../../components/confirm/confirm'
+import {getApi} from '../../api/getApi.js'
+import {mapActions, mapGetters} from 'vuex'
+import {share} from '../../common/js/share.js'
 
+const ERR_OK = 0
 export default {
+  data () {
+    return {
+      hotKey: [],
+      query: '',
+      ensure: false,
+      shareVal: {
+        title: '赛恩财经:聚合财经新媒体',
+        summary: '赛恩财经，提供全球股票,外汇,期货,债券,基金和数字货币等数十万种金融投资产品的实时行情和新闻资讯,以及多种投资工具。',
+        thumb: 'https://cnibd.oss-cn-beijing.aliyuncs.com/resource/images/sharelogo.png'
+      }
+    }
+  },
+  mounted () {
+    share(this.shareVal)
+  },
+  created () {
+    this._getHotKey()
+  },
+  computed: {
+    shortcut () {
+      return this.hotKey.concat(this.searchHistory)
+    },
+    ...mapGetters([
+      'searchHistory'
+    ])
+  },
+  methods: {
+    addQuery (query) {
+      this.ensure = true
+      this.$refs.searchBox.setQuery(query)
+    },
+    onQueryChange (query) {
+      this.query = query
+    },
+    onFocus () {
+      this.ensure = false
+    },
+    saveSearch () {
+      this.saveSearchHistory(this.query)
+    },
+    deleteOne (item) {
+      this.deleteSearchHistory(item)
+    },
+    showConfirm () {
+      this.$refs.confirm.show()
+    },
+    _getHotKey () {
+      getApi('/categories').then(res => {
+        if (res.data.errorCode === ERR_OK) {
+          this.hotKey = res.data.data
+        }
+      })
+    },
+    ...mapActions([
+      'saveSearchHistory',
+      'deleteSearchHistory',
+      'clearSearchHistory'
+    ])
+  },
+  watch: {
+    query (newQuery) {
+      if (!newQuery) {
+        this.ensure = false
+        setTimeout(() => {
+          this.$refs.shortcut.refresh()
+        }, 20)
+      }
+    }
+  },
   components: {
-    'search-box': SearchBox
+    'scroll': Scroll,
+    'search-box': SearchBox,
+    'suggest': Suggest,
+    'confirm': Confirm
   }
 }
 </script>
 
-<style>
-
+<style lang="stylus">
+@import "../../common/stylus/mixin.styl"
+.search
+  padding 2rem 0 3rem
+  background-color #fff
+  .search-box-wrapper
+    position relative
+    padding 0 2rem
+    .smart-box
+      position absolute
+      left 0
+      top 4.3rem
+      width 100%
+      z-index 20
+      background-color #fff
+      .smart-box-wrapper
+        margin 0 2rem
+        padding 0 1.6rem
+        border-radius 0.2rem
+        box-shadow 0px 1px 5px #999
+        background-color #fff
+        .ensure-wrapper
+          height 4rem
+          line-height 4rem
+          color #1f8bee
+          white-space: nowrap
+          overflow: hidden
+  .shortcut-wrapper
+    position fixed
+    top 13.9rem
+    bottom 0
+    width 100%
+    background-color #fff
+    .shortcut
+      height 100%
+      overflow hidden
+      .hot-key
+        margin 0 2rem 3rem
+        .title
+          margin-bottom 2rem
+          line-height 1.6rem
+          font-size 1.4rem
+          color #999
+        .item
+          display inline-block
+          padding 0 1.5rem
+          margin 0 1rem 1rem 0
+          height 3rem
+          line-height 3rem
+          font-size 1.5rem
+          border-radius 2rem
+          border 1px solid rgba(7,17,27,0.1)
+          color #393a4c
+      .search-history
+        margin-left 2rem
+        .title
+          display flex
+          padding-right 2rem
+          margin-bottom 1.5rem
+          line-height 1.6rem
+          font-size 1.4rem
+          color #999
+          .text
+            flex 1
+          .clear
+            padding 0 0.5rem
+            line-height 0
+            .icon-clear
+              display inline-block
+              width 1.6rem
+              height 1.6rem
+              background url(./icon-clear.png) no-repeat center
+              background-size 1.6rem
+        .search-list
+          .search-item
+            position relative
+            display flex
+            padding 1.4rem 2rem 1.4rem 0
+            margin-left 2.5rem
+            height 1.6rem
+            line-height 1.6rem
+            font-size 0
+            border-1px(rgba(7,17,27,0.1))
+            .sign
+              position absolute
+              left -2.5rem
+              top 0
+              display inline-block
+              width 1.6rem
+              height 4.4rem
+              background url(./icon-history.png) no-repeat center
+              background-size 1.6rem
+            .text
+              flex 1
+              margin-left 0
+              font-size 1.5rem
+              color #393a4c
+              display: -webkit-box
+              -webkit-line-clamp: 1
+              -webkit-box-orient: vertical
+              overflow: hidden
+            .icon
+              padding 0 0.5rem 0 1rem
+              line-height 0
+              .icon-delete
+                display inline-block
+                width 1.6rem
+                height 1.6rem
+                background url(./icon-delete.png) no-repeat center
+                background-size 1.6rem
+  .search-result
+    position fixed
+    width 100%
+    top 13.5rem
+    bottom 0
+    overflow hidden
+    background-color #fff
 </style>
