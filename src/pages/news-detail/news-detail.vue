@@ -3,10 +3,10 @@
     <div class="article-header">
         <h1 class="article-title">{{newsDetails.title}}</h1>
         <div class="article-info">
-            <div class="author">
+            <router-link :to="`/columnist/${newsDetails.author_id}`" tag="div" class="author">
                 <span class="avatar"><img :src="newsDetails.author_avatar" @load="loadAvatar"></span>
                 <span class="name">{{newsDetails.author_name}}</span>
-            </div>
+            </router-link>
             <div class="time">{{newsDetails.publish_time}}</div>
         </div>
     </div>
@@ -56,6 +56,7 @@ export default {
   methods: {
     httpGet () {
       getApi(`/detail?article_id=${this.$route.params.id}`).then(res => {
+        console.log(res)
         // console.log(window.location.pathname)
         if (res.data.errorCode === ERR_OK) {
           this.newsDetails = res.data.data
@@ -126,7 +127,7 @@ export default {
         .name
           display: inline-block
           line-height 2rem
-          font-size:1.4rem
+          font-size 1.4rem
           margin-left: 8px
           color: #666
       .time

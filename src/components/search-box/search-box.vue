@@ -11,7 +11,7 @@ export default {
   props: {
     placeholder: {
       type: String,
-      default: '搜索文章关键字、作者'
+      default: '搜索文章关键字'
     }
   },
   data () {
