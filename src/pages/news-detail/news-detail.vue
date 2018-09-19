@@ -56,7 +56,6 @@ export default {
   methods: {
     httpGet () {
       getApi(`/detail?article_id=${this.$route.params.id}`).then(res => {
-        console.log(res)
         // console.log(window.location.pathname)
         if (res.data.errorCode === ERR_OK) {
           this.newsDetails = res.data.data
