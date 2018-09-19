@@ -62,6 +62,7 @@ export default {
   top 0
   bottom 0
   background-color rgba(7,17,27,0.9)
+  z-index 100
   &.confirm-fade-enter-active
     animation: confirm-fadein 0.4s
     .confirm-content

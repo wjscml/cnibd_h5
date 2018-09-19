@@ -36,7 +36,7 @@ export default {
     },
     ensure: {
       type: Boolean,
-      default: null
+      default: true
     }
   },
   methods: {
@@ -50,7 +50,7 @@ export default {
           this.news = res.data.data
         } else {
           this.news = []
-          this.title = '抱歉，暂无搜索结果'
+          this.title = '抱歉，未找到相关内容'
           this.hasGif = false
         }
       }).catch(error => {
@@ -81,8 +81,14 @@ export default {
     }
   },
   watch: {
+    query (newQuery, oldQuery) {
+      if (oldQuery === '') {
+        this.news = []
+      }
+    },
     ensure () {
       if (this.ensure) {
+        this.news = []
         this._getNews()
       }
     }

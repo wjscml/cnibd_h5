@@ -1,7 +1,7 @@
 <template>
   <div class="search">
     <div class="search-box-wrapper">
-      <search-box ref="searchBox" @query="onQueryChange" @focus="onFocus"></search-box>
+      <search-box ref="searchBox" @query="onQueryChange" @keyupEnter="addQuery(query)"></search-box>
       <div class="smart-box" v-show="query && !ensure">
         <div class="smart-box-wrapper">
           <p class="ensure-wrapper" @click="addQuery(query)">搜索“{{query}}”</p>
@@ -41,7 +41,7 @@
         </div>
       </scroll>
     </div>
-    <div class="search-result" v-show="ensure">
+    <div class="search-result">
       <suggest @select="saveSearch" :query="query" :ensure="ensure"></suggest>
     </div>
     <confirm @confirm="clearSearchHistory" text="是否清空所有搜索历史" ref="confirm"></confirm>
@@ -87,14 +87,16 @@ export default {
   },
   methods: {
     addQuery (query) {
-      this.ensure = true
-      this.$refs.searchBox.setQuery(query)
+      if (query !== '') {
+        this.ensure = true
+        this.$refs.searchBox.setQuery(query)
+      }
     },
-    onQueryChange (query) {
-      this.query = query
-    },
-    onFocus () {
-      this.ensure = false
+    onQueryChange (newQuery, oldQuery) {
+      this.query = newQuery
+      if (oldQuery !== '') {
+        this.ensure = false
+      }
     },
     saveSearch () {
       this.saveSearchHistory(this.query)
@@ -170,6 +172,7 @@ export default {
     bottom 0
     width 100%
     background-color #fff
+    z-index 10
     .shortcut
       height 100%
       overflow hidden

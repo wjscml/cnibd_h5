@@ -1,7 +1,7 @@
 <template>
   <div class="search-box">
     <i class="icon-search"></i>
-    <input class="box" @focus="focus" v-model="query" :placeholder="placeholder">
+    <input class="box" @keyup.enter="keyupEnter" v-model="query" :placeholder="placeholder">
     <i @click="clear" v-show="query" class="icon-dismiss"></i>
   </div>
 </template>
@@ -26,13 +26,13 @@ export default {
     setQuery (query) {
       this.query = query
     },
-    focus () {
-      this.$emit('focus')
+    keyupEnter () {
+      this.$emit('keyupEnter')
     }
   },
   created () {
-    this.$watch('query', (newQuery) => {
-      this.$emit('query', newQuery)
+    this.$watch('query', (newQuery, oldQuery) => {
+      this.$emit('query', newQuery, oldQuery)
     })
   }
 }
