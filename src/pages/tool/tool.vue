@@ -1,5 +1,5 @@
 <template>
-<div class="calculator">
+<div class="calculator" ref="calculator">
   <h3 class="title">个税计算器</h3>
   <div class="content">
     <input type="number" id="salary" placeholder="请输入工资" v-model.number='bfoIncome'/>
@@ -147,14 +147,16 @@ export default {
 <style lang="stylus">
 @import "../../common/stylus/mixin.styl"
 .calculator
-  min-height calc(100vh - 12.52rem)
+  min-height calc(100vh - 12.6rem)
   background-color #fff
   color #393a4c
   .title
-    line-height 4.92rem
-    height 4.92rem
+    line-height 5rem
+    height 5rem
     border-1px(rgba(7,17,27,0.1))
+    font-size 2rem
     text-align center
+    color #7f7f7f
   .content
     padding 0 4rem
     #salary
@@ -164,8 +166,9 @@ export default {
       line-height 3.6rem
       margin 4rem 0 2rem
       border-radius: 3px
-      border: 1px solid #e0e0e0
+      background-color #f0f0f0
       outline none
+      border none
       text-align center
       caret-color: #1f8bee
       &:focus
