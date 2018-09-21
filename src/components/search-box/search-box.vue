@@ -41,6 +41,7 @@ export default {
 <style lang="stylus" scoped>
 .search-box
   display flex
+  align-items center
   box-sizing border-box
   width 100%
   padding 0 0.6rem
@@ -49,8 +50,9 @@ export default {
   border-radius 0.6rem
   .icon-search
     width 4rem
-    background url(./icon-search.png) no-repeat center
-    background-size 4rem
+    font-size 2.5rem
+    text-align center
+    color #393a4c
   .box
     flex 1
     line-height 1.6rem
@@ -61,6 +63,7 @@ export default {
     border none
   .icon-dismiss
     width 4rem
-    background url(./icon-dismiss.png) no-repeat center
-    background-size 4rem
+    font-size 1.8rem
+    text-align center
+    color #bfbfbf
 </style>

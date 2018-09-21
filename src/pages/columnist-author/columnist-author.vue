@@ -206,17 +206,18 @@ export default {
     .back
       position absolute
       top 0
-      left 0.4rem
+      left 0
       z-index 50
+      padding 1rem 1rem 1rem 2rem
+      width 3rem
+      height 3rem
+      line-height 0
       .icon-back
-        display block
-        padding 1rem
-        width 3rem
-        height 3rem
-        background url(../../common/image/back.png) no-repeat center
-        background-size 3rem
+        line-height 3rem
+        font-size 2.4rem
+        color #fff
       .icon-back-black
-        background-image url(../../common/image/back-b.png)
+        color #393a4c
     .title
       border-1px(rgba(7,17,27,0.1))
       position absolute
@@ -256,6 +257,6 @@ export default {
       background-color #fff
 .slide-enter-active,.slide-leave-active
   transition all .3s
-.slide-enter,.slide-leave
+.slide-enter,.slide-leave-active
   transform translate3d(100%, 0, 0)
 </style>

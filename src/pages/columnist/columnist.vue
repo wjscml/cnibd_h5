@@ -98,7 +98,7 @@ export default {
 </script>
 
 <style lang="stylus">
-@import "../../common/stylus/mixin.styl"
+@import "../../common/stylus/vip.styl"
 .columnist
   padding 0 2rem
   .column

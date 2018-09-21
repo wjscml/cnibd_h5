@@ -17,7 +17,7 @@
             <span :class="{'nav-s':type===index}">{{item.name}}</span>
           </div>
         </div>
-        <div class="nav-more-btn" @click="showMoreTab"></div>
+        <div class="nav-more-btn" @click="showMoreTab"><i class="icon-more"></i></div>
       </scroll>
     </div>
     <div style="font-size: 0; line-height: 0" ref="newsMark"></div>
@@ -37,7 +37,9 @@
             <span class="item" v-for="(item, index) in newsNav" :key="index" @click="change(index)">{{item.name}}</span>
           </div>
         </div>
-        <div class="close" @click="hideMoreTab"></div>
+        <div class="close" @click="hideMoreTab">
+          <i class="icon-delete"></i>
+        </div>
       </div>
     </transition>
   </div>
@@ -281,12 +283,17 @@ export default {
     position absolute
     top 0
     right 0
+    padding-right 0.5rem
     width 4rem
     height 4.4rem
+    line-height 0
+    text-align center
+    color #bfbfbf
     box-shadow -0.1rem 0 1.5rem 0.5rem #fff
-    background url(./nav-more.png) no-repeat center
-    background-size 4rem 4rem
     background-color #fff
+    .icon-more
+      line-height 4.4rem
+      font-size 1.5rem
 .news-wrapper
   position fixed
   top 0
@@ -311,12 +318,11 @@ export default {
   width 100%
   height 100vh
   background-color rgba(7,17,27,0.9)
-  transition all 0.5s
   backdrop-filter: blur(10px)
   z-index 200
-  &.fade-transition
-    opacity 1
-  &.fade-enter, &.fade-leave
+  &.fade-enter-active, &.fade-leave-active
+     transition all 0.5s ease
+  &.fade-enter, &.fade-leave-active
     opacity 0
   .title
     height 4.92rem
@@ -343,7 +349,9 @@ export default {
     width 4rem
     height 4rem
     margin 0 auto 7rem
-    background url(./icon-close.png) no-repeat center
-    background-size 4rem
-
+    text-align center
+    .icon-delete
+      line-height 4rem
+      font-size 3rem
+      color #fff
 </style>

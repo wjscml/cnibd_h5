@@ -102,10 +102,10 @@ export default {
       if (this.loop) {
         pageIndex += 1
       }
-      console.log(pageIndex)
       this.timer = setTimeout(() => {
         this.slider.next(500)
       }, this.interval)
+      return pageIndex
     }
   }
 }

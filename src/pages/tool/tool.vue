@@ -1,6 +1,6 @@
 <template>
 <div class="calculator">
-  <h3 class="header">个税计算器</h3>
+  <h3 class="title">个税计算器</h3>
   <div class="content">
     <input type="number" id="salary" placeholder="请输入工资" v-model.number='bfoIncome'/>
     <p v-show='bfoIncome<1550'><b>您的工资小于最低标准</b></p>
@@ -150,7 +150,7 @@ export default {
   min-height calc(100vh - 12.52rem)
   background-color #fff
   color #393a4c
-  .header
+  .title
     line-height 4.92rem
     height 4.92rem
     border-1px(rgba(7,17,27,0.1))

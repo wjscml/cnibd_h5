@@ -9,7 +9,7 @@
           <div class="item gotop-btn" @click="goTop"></div>
         </div>
       </transition>
-      <div class="add-btn" @click="change" ref="addBtn"></div>
+      <div class="add-btn" @click="change" ref="addBtn"><i class="icon-add"></i></div>
     </div>
   </div>
 </template>
@@ -74,14 +74,15 @@ export default {
     height 4.6rem
     border-radius 2.3rem
     .bg-layer
+      overflow hidden
       position absolute
       top 0
       right 0
       width 100%
       height 4.6rem
       border-radius 2.3rem
-      background-color: rgba(31, 139, 238, .8)
-      transition all 0.4s
+      background-color: rgba(31, 139, 238, .7)
+      transition all 0.3s ease
       .item
         float left
         margin-right 1rem
@@ -90,7 +91,7 @@ export default {
         border-radius 50%
         background no-repeat center
         background-size 4.6rem
-        background-color: rgba(31, 139, 238, .4)
+        background-color: rgba(31, 139, 238, .7)
         &:active
           background-color #1f8bee
         &.home-btn
@@ -101,20 +102,35 @@ export default {
           background-image url(./last.png)
         &.next-btn
           background-image url(./next.png)
-    .btn-transition
-      width 100%
-      opacity 1
-    .btn-enter,.btn-leave
-      width 4.6rem
-      opacity 0.5
+      &.btn-enter-active
+        width 100%
+        opacity 1
+      &.btn-leave-active
+        width 4.6rem
+        opacity 0
+      &.btn-enter
+        width 4.6rem
+        opacity 0
+      &.btn-leave
+        width 100%
+        opacity 1
     .add-btn
       float right
       width 4.6rem
       height 4.6rem
+      font-size 0
       border-radius 50%
-      background url(./add.png) no-repeat center
-      background-size 4.6rem
+      text-align center
       background-color: rgba(31, 139, 238, .8)
       transition all .2s
-
+      &:after
+        content ''
+        display inline-block
+        height 100%
+        vertical-align middle
+      .icon-add
+        display inline-block
+        vertical-align middle
+        font-size 2.6rem
+        color #fff
 </style>

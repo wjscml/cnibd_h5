@@ -23,13 +23,13 @@
             <h1 class="title">
               <span class="text">搜索历史</span>
               <span class="clear" @click="showConfirm">
-                <i class="icon-clear"></i>
+                <i class="icon-delete_all"></i>
               </span>
             </h1>
             <div class="search-list">
               <ul>
                 <li @click="addQuery(item)" class="search-item" v-for="item in searchHistory" :key="item">
-                  <i class="sign"></i>
+                  <i class="icon-history"></i>
                   <span class="text">{{item}}</span>
                   <span class="icon" @click.stop="deleteSearchHistory(item)">
                     <i class="icon-delete"></i>
@@ -197,44 +197,42 @@ export default {
         margin-left 2rem
         .title
           display flex
+          align-items center
           padding-right 2rem
-          margin-bottom 1.5rem
-          line-height 1.6rem
-          font-size 1.4rem
+          margin-bottom 1rem
+          font-size 0
           color #999
           .text
             flex 1
+            font-size 1.4rem
           .clear
-            padding 0 0.5rem
-            line-height 0
-            .icon-clear
-              display inline-block
-              width 1.6rem
-              height 1.6rem
-              background url(./icon-clear.png) no-repeat center
-              background-size 1.6rem
+            extend-click()
+            padding-right .17rem
+            .icon-delete_all
+              font-size 1.7rem
+              color #bfbfbf
         .search-list
           .search-item
             position relative
             display flex
-            padding 1.4rem 2rem 1.4rem 0
+            align-items center
             margin-left 2.5rem
-            height 1.6rem
-            line-height 1.6rem
+            padding-right 2rem
+            height 4.4rem
+            line-height 0
             font-size 0
             border-1px(rgba(7,17,27,0.1))
-            .sign
+            .icon-history
               position absolute
               left -2.5rem
               top 0
-              display inline-block
-              width 1.6rem
               height 4.4rem
-              background url(./icon-history.png) no-repeat center
-              background-size 1.6rem
+              line-height 4.4rem
+              font-size 1.5rem
+              color #bfbfbf
             .text
               flex 1
-              margin-left 0
+              line-height 4.4rem
               font-size 1.5rem
               color #393a4c
               display: -webkit-box
@@ -242,18 +240,14 @@ export default {
               -webkit-box-orient: vertical
               overflow: hidden
             .icon
-              padding 0 0.5rem 0 1rem
-              line-height 0
+              extend-click()
               .icon-delete
-                display inline-block
-                width 1.6rem
-                height 1.6rem
-                background url(./icon-delete.png) no-repeat center
-                background-size 1.6rem
+                font-size 2rem
+                color #bfbfbf
   .search-result
     position fixed
     width 100%
-    top 13.5rem
+    top 13.9rem
     bottom 0
     overflow hidden
     background-color #fff
