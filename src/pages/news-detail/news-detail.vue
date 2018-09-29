@@ -15,7 +15,7 @@
     <div class="loading-container" v-show="isLoading">
       <loading></loading>
     </div>
-    <floating-btn :isShow="isShow" @gotop="gotop" @gonext="gonext" @golast="golast"></floating-btn>
+    <floating-btn :isShow="isShow" :getClass="getFavoriteIcon()" @gotop="gotop" @gonext="gonext" @golast="golast" @toggle="toggleFavorite"></floating-btn>
   </div>
 </template>
 
@@ -25,40 +25,47 @@ import {getApi} from '../../api/getApi.js'
 import {addTableBox} from '../../common/js/htmlUtil.js'
 import Loading from '../../components/loading/loading.vue'
 import FloatingBtn from '../../components/floating-btn/floating-btn.vue'
+import {mapActions, mapGetters} from 'vuex'
 
 const ERR_OK = 0
+var scrollTimer
 export default {
   data () {
     return {
-      newsDetails: {},
+      article: [],
+      newsDetails: [],
       newsContent: '',
       isLoading: true,
       isShow: true
     }
   },
-  components: {
-    'loading': Loading,
-    'floating-btn': FloatingBtn
-  },
   created () {
     this.httpGet()
   },
+  computed: {
+    ...mapGetters([
+      'favoriteList'
+    ])
+  },
   mounted () {
     setTimeout(() => {
-      var scrollTimer
-      window.addEventListener('scroll', () => {
-        this.isShow = false
-        clearTimeout(scrollTimer)
-        scrollTimer = setTimeout(this.showFloating, 400)
-      })
+      window.addEventListener('scroll', this.handleScroll)
     }, 20)
   },
   methods: {
+    handleScroll () {
+      this.isShow = false
+      clearTimeout(scrollTimer)
+      scrollTimer = setTimeout(() => {
+        this.isShow = true
+      }, 200)
+    },
     httpGet () {
       getApi(`/detail?article_id=${this.$route.params.id}`).then(res => {
         // console.log(window.location.pathname)
         if (res.data.errorCode === ERR_OK) {
           this.newsDetails = res.data.data
+          this.article = res.data.data
           this.newsContent = addTableBox(res.data.data.content)
           share(this.newsDetails)
         }
@@ -84,14 +91,41 @@ export default {
         this.$router.push(`/site/${this.newsDetails.article_before.id}`)
       }
     },
-    showFloating () {
-      this.isShow = true
-    }
+    getFavoriteIcon () {
+      if (this.isFavorite()) {
+        return 'icon-favor_fill'
+      }
+      return 'icon-favor'
+    },
+    toggleFavorite () {
+      if (this.isFavorite()) {
+        this.deleteFavoriteList(this.article)
+      } else {
+        this.saveFavoriteList(this.article)
+      }
+    },
+    isFavorite () {
+      const index = this.favoriteList.findIndex((item) => {
+        return item.id === this.article.id
+      })
+      return index > -1
+    },
+    ...mapActions([
+      'saveFavoriteList',
+      'deleteFavoriteList'
+    ])
   },
   watch: {
     '$route' (to, from) {
       this.httpGet()
     }
+  },
+  destroyed () {
+    window.removeEventListener('scroll', this.handleScroll)
+  },
+  components: {
+    'loading': Loading,
+    'floating-btn': FloatingBtn
   }
 }
 </script>

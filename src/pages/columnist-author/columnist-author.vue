@@ -10,6 +10,16 @@
           <h1 class="name">{{authorInfo.nickname}}</h1>
           <p class="intro">{{authorInfo.description}}</p>
         </div>
+        <div class="focus">
+          <div class="focus-content bg-red"  v-show="!isFavorite()" @click="saveFavorite"
+            ><i class="icon-add"></i><span>关&nbsp;注</span
+          ></div>
+          <transition name="focus">
+            <div class="focus-content" v-show="isFavorite()" @click="showConfirm">
+              <i class="icon-check"></i><span>已关注</span>
+            </div>
+          </transition>
+        </div>
         <div class="back" @click="back" ref="bar">
           <i class="icon-back" :class="{'icon-back-black': isScrollTop}"></i>
         </div>
@@ -25,18 +35,19 @@
           <load-tips v-if="news.length" :tips="tips" :isLoad="isLoad"></load-tips>
         </div>
       </scroll>
-
+      <confirm @confirm="deleteFavorite" text="是否不再关注此作者" ref="confirm"></confirm>
     </div>
   </transition>
 </template>
 
 <script>
+import Confirm from '../../components/confirm/confirm'
 import Scroll from '../../components/scroll/scroll.vue'
 import NewsColumn from '../../components/news-column/news-column.vue'
 import LoadTips from '../../components/load-tips/load-tips.vue'
 import {getApi} from '../../api/getApi.js'
-import {mapGetters} from 'vuex'
 import {share} from '../../common/js/share.js'
+import {mapActions, mapGetters} from 'vuex'
 
 const ERR_OK = 0
 export default {
@@ -52,14 +63,10 @@ export default {
       shareVal: {}
     }
   },
-  components: {
-    'news-column': NewsColumn,
-    'load-tips': LoadTips,
-    'scroll': Scroll
-  },
   computed: {
     ...mapGetters([
-      'author'
+      'author',
+      'favoriteColumnist'
     ])
   },
   mounted () {
@@ -133,7 +140,30 @@ export default {
     },
     touchToEnd () {
       this.loadMore()
-    }
+    },
+    saveFavorite () {
+      if (!this.isFavorite()) {
+        this.saveFavoriteColumnist(this.authorInfo)
+      }
+    },
+    deleteFavorite () {
+      if (this.isFavorite()) {
+        this.deleteFavoriteColumnist(this.authorInfo)
+      }
+    },
+    isFavorite () {
+      const index = this.favoriteColumnist.findIndex((item) => {
+        return item.author_id === this.authorInfo.author_id
+      })
+      return index > -1
+    },
+    showConfirm () {
+      this.$refs.confirm.show()
+    },
+    ...mapActions([
+      'saveFavoriteColumnist',
+      'deleteFavoriteColumnist'
+    ])
   },
   watch: {
     scrollY (newY) {
@@ -154,6 +184,12 @@ export default {
       let newHeight = this.topHeight * scale
       this.$refs.top.style['height'] = `${newHeight}px`
     }
+  },
+  components: {
+    'news-column': NewsColumn,
+    'load-tips': LoadTips,
+    'scroll': Scroll,
+    'confirm': Confirm
   }
 }
 </script>
@@ -203,6 +239,33 @@ export default {
       .intro
         line-height 1.8rem
         font-size 1.2rem
+    .focus
+      position absolute
+      top 1.4rem
+      right 2rem
+      .focus-content
+        width 6.6rem
+        height 2.8rem
+        border-radius 1.4rem
+        background-color rgba(7,17,27,.2)
+        color #fff
+        text-align center
+        line-height 0
+        &.bg-red
+          background-color #ff4343
+          &:active
+            background-color red
+        .icon-add, .icon-check
+          display inline-block
+          margin-right 0.2rem
+          line-height 2.8rem
+          font-size 1rem
+        span
+          display inline-block
+          line-height 2.8rem
+          font-size 1.2rem
+        &.focus-enter-active
+          animation focus-zoom 0.4s
     .back
       position absolute
       top 0
@@ -259,4 +322,11 @@ export default {
   transition all .3s
 .slide-enter,.slide-leave-active
   transform translate3d(100%, 0, 0)
+@keyframes focus-zoom
+  0%
+    transform: scale(0)
+  50%
+    transform: scale(1.1)
+  100%
+    transform: scale(1)
 </style>

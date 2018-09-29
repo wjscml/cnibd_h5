@@ -41,6 +41,12 @@ const Search = (resolve) => {
   })
 }
 
+const Favor = (resolve) => {
+  import('../pages/favor/favor.vue').then((module) => {
+    resolve(module)
+  })
+}
+
 const Tool = (resolve) => {
   import('../pages/tool/tool.vue').then((module) => {
     resolve(module)
@@ -98,6 +104,13 @@ export default new Router({
       component: Search,
       meta: {
         title: '赛恩财经——搜索'
+      }
+    },
+    {
+      path: '/favor',
+      component: Favor,
+      meta: {
+        title: '赛恩财经——我的收藏'
       }
     },
     {

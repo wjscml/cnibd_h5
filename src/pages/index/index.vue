@@ -216,9 +216,6 @@ export default {
     'loading': Loading,
     'slider': Slider,
     'scroll': Scroll
-  },
-  destroyed () {
-    window.removeEventListener('scroll', this.handleScroll)
   }
 }
 </script>

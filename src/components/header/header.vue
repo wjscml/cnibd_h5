@@ -2,7 +2,7 @@
   <div class="header" :class="{'noBorder': isNavList}">
     <div class="top-wrapper">
       <div @click="goIndex">
-        <img src="./logo.png" alt="logo" class="logo">
+        <i class="icon-logo"></i>
       </div>
       <div class="nav-btn" @click="changeNav">
         <i :class="isNavList ? 'icon-close' : 'icon-all'"></i>
@@ -10,14 +10,12 @@
     </div>
     <transition name="nav">
       <div class="nav-list" v-show="isNavList">
-        <transition name="navList">
-          <div class="nav-list-wrapper" @click="changeNav" v-show="isNavList">
+          <div class="nav-list-wrapper" @click="changeNav">
             <router-link :to="item.link" tag="div" v-for="(item, index) in nav" :key="index" class="nav-item">
               <i :class="item.icon" class="nav-item-icon"></i>
               <span class="nav-item-text">{{item.name}}</span>
             </router-link>
           </div>
-        </transition>
       </div>
     </transition>
   </div>
@@ -47,6 +45,11 @@ export default {
           name: '计算器',
           link: '/tool',
           icon: 'icon-keyboard'
+        },
+        {
+          name: '我的收藏',
+          link: '/favor',
+          icon: 'icon-favor'
         }
       ],
       isNavList: false
@@ -81,8 +84,9 @@ export default {
     align-items center
     justify-content space-between
     background #fff
-    .logo
-      height 2rem
+    .icon-logo
+      font-size 2.2rem
+      color #1f8bee
     .nav-btn
       color #393a4c
       .icon-all
@@ -100,17 +104,9 @@ export default {
     background-color rgba(7,17,27,0.9)
     backdrop-filter: blur(10px)
     z-index 100
-    &.nav-enter, &.nav-leave-active
-      opacity 0
-    &.nav-enter-active, &.nav-leave-active
-      transition all .4s ease
     .nav-list-wrapper
       background-color #fff
       border-1px(rgba(7,17,27,0.1))
-      &.navList-enter, &.navList-leave-active
-        transform translate3d(0, -100%, 0)
-      &.navList-enter-active, &.navList-leave-active
-        transition all .4s ease
       .nav-item
         display flex
         align-items center
@@ -127,5 +123,13 @@ export default {
         .nav-item-text
           margin-left 1rem
           font-size 1.6rem
+    &.nav-enter, &.nav-leave-active
+      opacity 0
+      .nav-list-wrapper
+        transform translate3d(0, -100%, 0)
+    &.nav-enter-active, &.nav-leave-active
+      transition all .4s ease
+      .nav-list-wrapper
+        transition all .4s ease
 
 </style>

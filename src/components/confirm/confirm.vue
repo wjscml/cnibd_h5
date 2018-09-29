@@ -78,8 +78,8 @@ export default {
       text-align center
       background-color #fff
       .text
-        padding 0 2rem
-        line-height 6rem
+        padding 1.8rem 2rem
+        line-height 2.4rem
         font-size 1.6rem
         border-bottom 1px solid rgba(7,17,27,0.1)
         color #393a4c
@@ -89,10 +89,10 @@ export default {
         font-size 1.5rem
         .operate-btn
           flex 1
-          color #1f8bee
+          color #999
           &:first-child
             border-right 1px solid rgba(7,17,27,0.1)
-            color #999
+            color #1f8bee
 @keyframes confirm-fadein
   0%
     opacity 0

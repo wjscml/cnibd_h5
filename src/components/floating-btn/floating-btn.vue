@@ -3,10 +3,11 @@
     <div class="floating-btn">
       <transition name="btn">
         <div class="bg-layer" v-show="!isClose">
-          <div class="item home-btn" @click="goHome"></div>
-          <div class="item last-btn" @click="goLast"></div>
-          <div class="item next-btn" @click="goNext"></div>
-          <div class="item gotop-btn" @click="goTop"></div>
+          <i class="item icon-nav-home" @click="goHome"></i>
+          <i class="item icon-backward" @click="goLast"></i>
+          <i class="item icon-forward" @click="goNext"></i>
+          <i class="item icon-top" @click="goTop"></i>
+          <i class="item icon-favor" :class="getClass" @click="toggle"></i>
         </div>
       </transition>
       <div class="add-btn" @click="change" ref="addBtn"><i class="icon-add"></i></div>
@@ -22,7 +23,14 @@ export default {
     }
   },
   props: {
-    isShow: Boolean
+    isShow: {
+      type: Boolean,
+      default: true
+    },
+    getClass: {
+      type: String,
+      default: ''
+    }
   },
   created () {
   },
@@ -45,6 +53,9 @@ export default {
     goNext () {
       this.$emit('gonext')
       this.isClose = !this.isClose
+    },
+    toggle () {
+      this.$emit('toggle')
     }
   },
   watch: {
@@ -71,53 +82,38 @@ export default {
   .floating-btn
     position relative
     width 100%
-    height 4.6rem
-    border-radius 2.3rem
+    height 4.2rem
+    border-radius 2.1rem
     .bg-layer
-      overflow hidden
       position absolute
       top 0
       right 0
+      display flex
+      align-items center
       width 100%
-      height 4.6rem
-      border-radius 2.3rem
+      height 4.2rem
+      border-radius 2.1rem
       background-color: rgba(31, 139, 238, .7)
-      transition all 0.3s ease
       .item
-        float left
         margin-right 1rem
-        width 4.6rem
-        height 4.6rem
+        width 4.2rem
+        line-height 4.2rem
         border-radius 50%
-        background no-repeat center
-        background-size 4.6rem
         background-color: rgba(31, 139, 238, .7)
+        font-size 2.2rem
+        text-align center
+        color #fff
         &:active
           background-color #1f8bee
-        &.home-btn
-          background-image url(./home.png)
-        &.gotop-btn
-          background-image url(./gotop.png)
-        &.last-btn
-          background-image url(./last.png)
-        &.next-btn
-          background-image url(./next.png)
-      &.btn-enter-active
-        width 100%
-        opacity 1
-      &.btn-leave-active
-        width 4.6rem
+      &.btn-enter, &.btn-leave-active
+        width 4.2rem
         opacity 0
-      &.btn-enter
-        width 4.6rem
-        opacity 0
-      &.btn-leave
-        width 100%
-        opacity 1
+      &.btn-enter-active, &.btn-leave-active
+        transition all 0.3s ease
     .add-btn
       float right
-      width 4.6rem
-      height 4.6rem
+      width 4.2rem
+      height 4.2rem
       font-size 0
       border-radius 50%
       text-align center
@@ -131,6 +127,6 @@ export default {
       .icon-add
         display inline-block
         vertical-align middle
-        font-size 2.6rem
+        font-size 2.4rem
         color #fff
 </style>
