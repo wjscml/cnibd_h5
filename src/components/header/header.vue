@@ -1,6 +1,9 @@
 <template>
   <div class="header" :class="{'noBorder': isNavList}">
     <div class="top-wrapper">
+      <router-link to="/login" class="login-btn">
+        <i class="icon-people"></i>
+      </router-link>
       <div @click="goIndex">
         <i class="icon-logo"></i>
       </div>
@@ -84,15 +87,21 @@ export default {
     align-items center
     justify-content space-between
     background #fff
+    .login-btn
+      extend-click()
+      color #393a4c
+      .icon-people
+        font-size 2.5rem
     .icon-logo
       font-size 2.2rem
       color #1f8bee
     .nav-btn
+      extend-click()
       color #393a4c
       .icon-all
-        font-size 2.7rem
+        font-size 2.5rem
       .icon-close
-        font-size 2.7rem
+        font-size 2.5rem
   .nav-list
     overflow hidden
     position absolute

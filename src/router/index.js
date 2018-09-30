@@ -11,6 +11,18 @@ const Index = (resolve) => {
   })
 }
 
+const Login = (resolve) => {
+  import('../pages/login/login.vue').then((module) => {
+    resolve(module)
+  })
+}
+
+const Register = (resolve) => {
+  import('../pages/register/register.vue').then((module) => {
+    resolve(module)
+  })
+}
+
 const About = (resolve) => {
   import('../pages/about/about.vue').then((module) => {
     resolve(module)
@@ -76,21 +88,35 @@ export default new Router({
       path: '/index',
       component: Index,
       meta: {
-        title: '赛恩财经:聚合财经新媒体'
+        title: '赛恩财经 - 聚合财经新媒体'
+      }
+    },
+    {
+      path: '/login',
+      component: Login,
+      meta: {
+        title: '登录 - 赛恩财经'
+      }
+    },
+    {
+      path: '/register',
+      component: Register,
+      meta: {
+        title: '注册 - 赛恩财经'
       }
     },
     {
       path: '/about',
       component: About,
       meta: {
-        title: '赛恩财经——关于我们'
+        title: '关于我们 - 赛恩财经'
       }
     },
     {
       path: '/columnist',
       component: Columnist,
       meta: {
-        title: '赛恩财经——专栏作者'
+        title: '专栏作者 - 赛恩财经'
       },
       children: [
         {
@@ -103,21 +129,21 @@ export default new Router({
       path: '/search',
       component: Search,
       meta: {
-        title: '赛恩财经——搜索'
+        title: '搜索 - 赛恩财经'
       }
     },
     {
       path: '/favor',
       component: Favor,
       meta: {
-        title: '赛恩财经——我的收藏'
+        title: '我的收藏 - 赛恩财经'
       }
     },
     {
       path: '/tool',
       component: Tool,
       meta: {
-        title: '赛恩财经——个税计算器'
+        title: '个税计算器 - 赛恩财经'
       }
     },
     {
@@ -129,7 +155,7 @@ export default new Router({
       redirect: '/index',
       component: Calculator,
       meta: {
-        title: '赛恩财经:聚合财经新媒体'
+        title: '赛恩财经 - 聚合财经新媒体'
       }
     },
     {
