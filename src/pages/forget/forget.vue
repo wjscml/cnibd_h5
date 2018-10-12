@@ -1,81 +1,72 @@
 <template>
-  <div class="login">
-    <header class="login-header">
-      <span class="title">登 录</span>
+  <div class="register">
+    <header class="register-header">
+      <span class="title">找回密码</span>
       <div class="btn-close" @click="close">
         <i class="icon-close"></i>
       </div>
     </header>
-    <form class="login-form" @submit="checkForm">
-      <div class="login-content">
+    <form class="register-form" @submit="checkForm">
+      <div class="register-content">
         <div class="input-wrapper" :class="{'error-input': isTel}">
           <input v-model="tel" type="text" placeholder="请输入手机号">
           <i @click="clearTel" v-show="tel" class="icon-dismiss"></i>
         </div>
+        <div class="input-wrapper" :class="{'error-input': isCode}">
+          <input v-model="code" type="text" placeholder="请输入验证码">
+          <div @click="refreshCode" class="identify-wrapper">
+            <identify :identifyCode="identifyCode"></identify>
+          </div>
+        </div>
+        <div class="input-wrapper" :class="{'error-input': isMobileCode}">
+          <input v-model="mobileCode" type="text" placeholder="请输入短信验证码">
+          <button class="send-code">发送验证码</button>
+        </div>
         <div class="input-wrapper" :class="{'error-input': isPsw}">
-          <input v-model="password" type="password" placeholder="请输入密码">
+          <input v-model="password" type="password" placeholder="请输入新密码">
         </div>
       </div>
-      <div class="submit" @click="login">登录</div>
-      <div class="login-tips">
-        <router-link to="/register" tag="span">立即注册</router-link>
-        <router-link to="/forget" tag="span">忘记密码</router-link>
-      </div>
+      <button type="submit" class="submit">确认修改</button>
       <transition name="error">
         <div class="error-wrapper" v-if="errors.length" ref="errorWrapper">
           <p class="error-text" v-for="(error, index) in errors" :key="index" v-if="index == 0">{{error}}</p>
         </div>
       </transition>
     </form>
-    <div class="login-wx">
-      <i class="icon-weixin"></i>
-      <p>微信登录</p>
-    </div>
   </div>
 </template>
 
 <script>
-import {postApi} from '../../api/getApi.js'
-import {mapActions} from 'vuex'
+import Identify from '../../components/identify/identify'
 
-const ERR_OK = '0'
 export default {
   data () {
     return {
       errors: [],
-      tel: '',
-      password: '',
+      tel: null,
+      password: null,
+      code: null,
+      mobileCode: null,
       isTel: false,
-      isPsw: false
+      isPsw: false,
+      isCode: false,
+      isMobileCode: false,
+      identifyCodes: '234567890ASDFGHJKLZXCVBNMQWERTYUOP',
+      identifyCode: ''
     }
   },
+  mounted () {
+    this.identifyCode = ''
+    this.makeCode(this.identifyCodes, 4)
+  },
   methods: {
-    login () {
-      this.checkForm()
-      if (this.checkForm()) {
-        this.toLogin()
-      }
-    },
-    toLogin () {
-      let loginParam = {
-        mobileNumber: this.tel,
-        password: this.password
-      }
-      postApi('/index?method=user.login&format=json', loginParam).then(res => {
-        if (res.data.errorCode === ERR_OK) {
-          alert('成功登陆！')
-          this.saveLoginState(true)
-          this.$router.push({path: '/index'})
-        } else {
-          this.errors.push(res.data.errorMessage)
-        }
-      }).catch(error => {
-        console.log(error)
-      })
-    },
-    checkForm () {
+    checkForm (e) {
+      this.errors = []
       this.isTel = false
       this.isPsw = false
+      if (this.tel && this.password && this.code && this.mobileCode) {
+        return true
+      }
       if (!this.tel) {
         this.errors.push('请输入手机号码')
         this.isTel = true
@@ -86,19 +77,35 @@ export default {
       if (!this.password) {
         this.errors.push('请输入密码')
         this.isPsw = true
+      } else if (this.password.length < 6 || this.password.length > 18) {
+        this.errors.push('请设置6~18位密码')
+        this.isPsw = true
+      }
+      if (!this.code) {
+        this.errors.push('请输入验证码')
+        this.isCode = true
+      } else if (this.upperCase(this.code) !== this.identifyCode) {
+        this.errors.push('验证码不正确')
+        this.isCode = true
+      }
+      if (!this.mobileCode) {
+        this.errors.push('请输入短信验证码')
+        this.isMobileCode = true
       }
       if (!this.errors.length) {
         return true
-      } else {
-        setTimeout(() => {
-          this.errors = []
-        }, 4000)
-        return false
       }
+      setTimeout(() => {
+        this.errors = []
+      }, 4000)
+      e.preventDefault()
     },
     validTel (tel) {
       var re = /^[0-9]{11}$/
       return re.test(tel)
+    },
+    upperCase (str) {
+      return str.toUpperCase()
     },
     clearTel () {
       this.tel = ''
@@ -106,16 +113,28 @@ export default {
     close () {
       this.$router.push({path: '/index'})
     },
-    ...mapActions([
-      'saveLoginState'
-    ])
+    randomNum (min, max) {
+      return Math.floor(Math.random() * (max - min) + min)
+    },
+    refreshCode () {
+      this.identifyCode = ''
+      this.makeCode(this.identifyCodes, 4)
+    },
+    makeCode (o, l) {
+      for (let i = 0; i < l; i++) {
+        this.identifyCode += this.identifyCodes[this.randomNum(0, this.identifyCodes.length)]
+      }
+    }
+  },
+  components: {
+    'identify': Identify
   }
 }
 </script>
 
 <style lang="stylus">
 @import "../../common/stylus/mixin.styl"
-.login
+.register
   position fixed
   top 0
   bottom 0
@@ -123,7 +142,7 @@ export default {
   right 0
   width 100%
   background-color #fff
-  .login-header
+  .register-header
     display flex
     align-items center
     padding 0 2rem 0 4.5rem
@@ -139,41 +158,41 @@ export default {
       font-size 0
       .icon-close
         font-size 2.5rem
-  .login-form
+  .register-form
     position relative
     padding 3rem 2rem 0
-    .login-content
+    .register-content
       margin-bottom 7rem
       .input-wrapper
+        position relative
         display flex
         align-items center
         margin-bottom 1rem
-        padding 1.6rem 0
+        height 5rem
         font-size 0
         border-bottom 1px solid rgba(7,17,27,0.1)
         &.error-input
           border-bottom-color #f1403c
         input
-          vertical-align top
+          flex 1
           font-size 1.6rem
-          width 100%
           outline none
           border none
-          color #393a4c
           caret-color #1f8bee
+        .identify-wrapper
+          overflow hidden
+        .send-code
+          width 10rem
+          font-size 1.4rem
+          background-color #ffffff
+          color #1f8bee
+          outline none
+          border none
         .icon-dismiss
           width 2.2rem
           font-size 1.8rem
           text-align center
           color #bfbfbf
-    .login-tips
-      padding 1.4rem 0.4rem
-      display flex
-      align-items center
-      justify-content space-between
-      span
-        font-size 1.4rem
-        color #393a4c
     .submit
       width 100%
       outline none
@@ -184,7 +203,6 @@ export default {
       border-radius .4rem
       background-color #1f8bee
       color #fff
-      text-align center
     .error-wrapper
       position absolute
       top -1rem
@@ -201,18 +219,6 @@ export default {
         background-color #f1403c
       &.error-enter-active
         animation show-error 4s ease
-  .login-wx
-    position absolute
-    bottom 4rem
-    left 0
-    width 100%
-    text-align center
-    .icon-weixin
-      font-size 5rem
-      color #44b549
-    p
-      font-size 1.4rem
-      color #393a4c
 @keyframes show-error
   0%
     opacity 0

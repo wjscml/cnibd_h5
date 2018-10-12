@@ -23,6 +23,12 @@ const Register = (resolve) => {
   })
 }
 
+const Forget = (resolve) => {
+  import('../pages/forget/forget.vue').then((module) => {
+    resolve(module)
+  })
+}
+
 const About = (resolve) => {
   import('../pages/about/about.vue').then((module) => {
     resolve(module)
@@ -106,6 +112,13 @@ export default new Router({
       }
     },
     {
+      path: '/forget',
+      component: Forget,
+      meta: {
+        title: '找回密码 - 赛恩财经'
+      }
+    },
+    {
       path: '/about',
       component: About,
       meta: {
@@ -136,7 +149,8 @@ export default new Router({
       path: '/favor',
       component: Favor,
       meta: {
-        title: '我的收藏 - 赛恩财经'
+        title: '我的收藏 - 赛恩财经',
+        isLogin: true
       }
     },
     {

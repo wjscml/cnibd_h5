@@ -37,6 +37,10 @@ export default {
       type: Boolean,
       default: false
     },
+    listenScrollEnd: {
+      type: Boolean,
+      default: false
+    },
     pullUpLoad: {
       type: Boolean,
       default: false
@@ -76,6 +80,11 @@ export default {
         scrollX: this.scrollX,
         eventPassthrough: this.eventPassthrough
       })
+      if (this.listenScrollEnd) {
+        this.scroll.on('scrollEnd', (pos) => {
+          this.$emit('scroll-end', pos)
+        })
+      }
       if (this.listenScroll || this.pullUpLoad) {
         let me = this
         this.scroll.on('scroll', (pos) => {

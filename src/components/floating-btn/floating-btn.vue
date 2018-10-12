@@ -7,7 +7,7 @@
           <i class="item icon-backward" @click="goLast"></i>
           <i class="item icon-forward" @click="goNext"></i>
           <i class="item icon-top" @click="goTop"></i>
-          <i class="item icon-favor" :class="getClass" @click="toggle"></i>
+          <i class="item" :class="getClass" @click="toggle"></i>
         </div>
       </transition>
       <div class="add-btn" @click="change" ref="addBtn"><i class="icon-add"></i></div>

@@ -83,6 +83,9 @@ export default {
       'favoriteColumnist'
     ])
   },
+  created () {
+    console.log(this.favoriteList)
+  },
   methods: {
     switchItem (index) {
       this.currentIndex = index
@@ -121,7 +124,6 @@ export default {
         this.tips = '暂无收藏作者'
         return true
       }
-      console.log('this.noResult')
     }
   },
   components: {

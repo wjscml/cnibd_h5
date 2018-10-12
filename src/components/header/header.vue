@@ -1,23 +1,26 @@
 <template>
   <div class="header" :class="{'noBorder': isNavList}">
     <div class="top-wrapper">
-      <router-link to="/login" class="login-btn">
+      <div @click="goLogin" class="login-btn" v-if="!loginState">
         <i class="icon-people"></i>
-      </router-link>
+      </div>
+      <div @click="changePrivateNav" class="login-btn" v-if="loginState && !isNavList">
+        <i class="icon-people"></i>
+      </div>
       <div @click="goIndex">
         <i class="icon-logo"></i>
       </div>
-      <div class="nav-btn" @click="changeNav">
+      <div class="nav-btn" @click="changeCommonNav">
         <i :class="isNavList ? 'icon-close' : 'icon-all'"></i>
       </div>
     </div>
     <transition name="nav">
       <div class="nav-list" v-show="isNavList">
-          <div class="nav-list-wrapper" @click="changeNav">
-            <router-link :to="item.link" tag="div" v-for="(item, index) in nav" :key="index" class="nav-item">
+          <div class="nav-list-wrapper">
+            <div v-for="(item, index) in nav" :key="index" class="nav-item" @click.stop="selectNav(item)">
               <i :class="item.icon" class="nav-item-icon"></i>
               <span class="nav-item-text">{{item.name}}</span>
-            </router-link>
+            </div>
           </div>
       </div>
     </transition>
@@ -25,10 +28,13 @@
 </template>
 
 <script>
+import {mapActions, mapGetters} from 'vuex'
+
 export default {
   data () {
     return {
-      nav: [
+      nav: [],
+      commonNav: [
         {
           name: '首页',
           link: '/index',
@@ -48,24 +54,60 @@ export default {
           name: '计算器',
           link: '/tool',
           icon: 'icon-keyboard'
-        },
+        }
+      ],
+      privateNav: [
         {
           name: '我的收藏',
           link: '/favor',
           icon: 'icon-favor'
+        },
+        {
+          name: '退出登陆',
+          link: '/index',
+          icon: 'icon-logout'
         }
       ],
       isNavList: false
     }
   },
+  computed: {
+    ...mapGetters([
+      'loginState'
+    ])
+  },
   methods: {
-    changeNav () {
+    changeCommonNav () {
       this.isNavList = !this.isNavList
+      if (this.isNavList) {
+        this.nav = this.commonNav
+      }
+    },
+    changePrivateNav () {
+      this.isNavList = !this.isNavList
+      if (this.isNavList) {
+        this.nav = this.privateNav
+      }
     },
     goIndex () {
       this.$router.push({path: '/index'})
       this.isNavList = false
-    }
+    },
+    goLogin () {
+      this.$router.push({path: '/login'})
+      this.isNavList = false
+    },
+    selectNav (item) {
+      if (item.icon === 'icon-logout') {
+        this.saveLoginState(false)
+        alert('已退出登陆')
+      }
+      this.$router.push({path: item.link})
+      this.isNavList = false
+    },
+    ...mapActions([
+      'saveLoginState'
+    ])
   }
 }
 </script>

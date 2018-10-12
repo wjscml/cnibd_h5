@@ -21,9 +21,9 @@
       </scroll>
     </div>
     <div style="font-size: 0; line-height: 0" ref="newsMark"></div>
-    <scroll @scroll="scroll" @touchToEnd="touchToEnd" @scrollToTop="scrollToTop" @pullingDown="pullingDown" :data="news" :probeType="probeType" :pullUpLoad="pullUpLoad" :pullDownRefresh="pullDownRefresh" class="news-wrapper" ref="newsWrapper">
+    <scroll @scroll="scroll" @scroll-end="scrollEnd" @touchToEnd="touchToEnd" @scrollToTop="scrollToTop" @pullingDown="pullingDown" :data="news" :probeType="probeType" :listenScrollEnd="listenScrollEnd" :pullUpLoad="pullUpLoad" :pullDownRefresh="pullDownRefresh" class="news-wrapper" ref="newsWrapper">
       <div class="news-content">
-        <news-column :news="news" v-for="(item, index) in newsNav" :key="index" v-show="type===index"></news-column>
+        <news-column :news="news"></news-column>
         <load-tips :tips="tips" :isLoad="isLoad" v-if="news.length"></load-tips>
         <load-tips :tips="downTips" class="pulldown-tips"></load-tips>
       </div>
@@ -53,6 +53,7 @@ import LoadTips from '../../components/load-tips/load-tips.vue'
 import Loading from '../../components/loading/loading.vue'
 import {getApi} from '../../api/getApi.js'
 import {share} from '../../common/js/share.js'
+import {saveNewslist, loadNewslist, removeNewslist, saveType, loadType, removeType, saveScrollHeight, loadScrollHeight, removeScrollHeight} from '../../common/js/cache'
 
 const ERR_OK = 0
 export default {
@@ -83,9 +84,9 @@ export default {
     this.probeType = 3
     this.pullUpLoad = true
     this.pullDownRefresh = true
+    this.listenScrollEnd = true
     this._getSlider()
     this._getNewsNav()
-    this._getNews()
   },
   mounted () {
     share(this.shareVal)
@@ -94,7 +95,7 @@ export default {
     loadImage () {
       if (!this.checkLoaded) {
         this.$refs.newsWrapper.refresh()
-        this._getNews()
+        this.firstGetNews()
         this.checkLoaded = true
       }
     },
@@ -126,10 +127,11 @@ export default {
         if (res.data.errorCode === ERR_OK) {
           this.news = res.data.data
           this.$nextTick(() => {
-            this.navHeight = this.$refs.navWrapper.clientHeight
+            this.navHeight = this.$refs.navWrapper.getBoundingClientRect().height || this.$refs.navWrapper.clientHeight
             this.topHeight = this.$refs.newsMark.getBoundingClientRect().top
             this.minTranslateY = this.navHeight - this.topHeight
             this.$refs.newsWrapper.$el.style.top = `${this.topHeight}px`
+            this.$refs.newsWrapper.scrollTo(0, loadScrollHeight(), 20)
           })
         } else {
           this.news = []
@@ -142,6 +144,23 @@ export default {
         }
       })
     },
+    firstGetNews () {
+      this.news = loadNewslist()
+      if (loadType().length !== 0) {
+        this.type = loadType()
+      }
+      if (this.news.length === 0) {
+        this._getNews()
+      } else {
+        this.$nextTick(() => {
+          this.navHeight = this.$refs.navWrapper.clientHeight
+          this.topHeight = this.$refs.newsMark.getBoundingClientRect().top
+          this.minTranslateY = this.navHeight - this.topHeight
+          this.$refs.newsWrapper.$el.style.top = `${this.topHeight}px`
+          this.$refs.newsWrapper.scrollTo(0, loadScrollHeight(), 20)
+        })
+      }
+    },
     loadMore () {
       this.tips = '加载中...'
       this.isLoad = true
@@ -150,6 +169,7 @@ export default {
         this.isLoad = false
         if (res.data.errorCode === ERR_OK) {
           this.news = this.news.concat(res.data.data)
+          saveNewslist(this.news)
           this.tips = '上滑加载更多'
         } else {
           this.tips = '没有更多数据了~'
@@ -163,12 +183,19 @@ export default {
     },
     change (i) {
       this.type = i
+      saveType(i)
       this.page = 0
-      this.scrollCenter(i)
       this.isMoreTab = false
+      this.scrollCenter(i)
+      removeNewslist()
+      this._getNews()
+      this.scrollTop()
     },
     scroll (pos) {
       this.scrollH = pos.y
+    },
+    scrollEnd (pos) {
+      saveScrollHeight(pos.y)
     },
     scrollCenter (val) {
       this.$refs.navScroll.scrollToElement(this.$refs.navBtn[val], 300, true, true)
@@ -200,8 +227,7 @@ export default {
   },
   watch: {
     type (i) {
-      this._getNews()
-      this.scrollTop()
+
     },
     scrollH (newY) {
       if (newY <= 0) {
@@ -209,6 +235,10 @@ export default {
         this.$refs.navWrapper.style['transform'] = `translate3d(0, ${translateY}px, 0)`
       }
     }
+  },
+  beforeDestroy () {
+    removeType()
+    removeScrollHeight()
   },
   components: {
     'news-column': NewsColumn,

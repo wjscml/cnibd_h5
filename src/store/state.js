@@ -4,7 +4,8 @@ const state = {
   author: {},
   searchHistory: loadSearch(),
   favoriteList: loadFavorite(),
-  favoriteColumnist: loadColumnist()
+  favoriteColumnist: loadColumnist(),
+  loginState: false
 }
 
 export default state
