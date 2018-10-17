@@ -29,6 +29,12 @@ const Forget = (resolve) => {
   })
 }
 
+const Agreement = (resolve) => {
+  import('../pages/agreement/agreement.vue').then((module) => {
+    resolve(module)
+  })
+}
+
 const About = (resolve) => {
   import('../pages/about/about.vue').then((module) => {
     resolve(module)
@@ -119,11 +125,22 @@ export default new Router({
       }
     },
     {
-      path: '/about',
-      component: About,
+      path: '/agreement',
+      component: Agreement,
       meta: {
-        title: '关于我们 - 赛恩财经'
+        title: '用户注册协议 - 赛恩财经'
       }
+    },
+    {
+      path: '/favor',
+      component: Favor,
+      meta: {
+        title: '我的收藏 - 赛恩财经'
+      }
+    },
+    {
+      path: '/site/:id',
+      component: NewsDetail
     },
     {
       path: '/columnist',
@@ -146,14 +163,6 @@ export default new Router({
       }
     },
     {
-      path: '/favor',
-      component: Favor,
-      meta: {
-        title: '我的收藏 - 赛恩财经',
-        isLogin: true
-      }
-    },
-    {
       path: '/tool',
       component: Tool,
       meta: {
@@ -161,8 +170,11 @@ export default new Router({
       }
     },
     {
-      path: '/site/:id',
-      component: NewsDetail
+      path: '/about',
+      component: About,
+      meta: {
+        title: '关于我们 - 赛恩财经'
+      }
     },
     {
       path: '/calculator',

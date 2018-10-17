@@ -1,9 +1,8 @@
 <template>
   <div class="columnist">
     <div @click="selectAuthor(item)" class="column" v-for="(item, index) in columnist" :key="index">
-      <div class="avatar">
+      <div class="avatar" :class="{'vip': item.is_certificate === 1}">
         <img class="image" :src="item.avatar">
-        <i :class="{'vip': item.is_certificate === 1}"></i>
       </div>
       <div class="text">
         <h1 class="name">{{item.nickname}}</h1>
@@ -32,8 +31,8 @@ export default {
       isLoad: null,
       page: 0,
       shareVal: {
-        title: '赛恩财经——专栏作家',
-        summary: '赛恩财经，提供全球股票,外汇,期货,债券,基金和数字货币等数十万种金融投资产品的实时行情和新闻资讯,以及多种投资工具。',
+        title: document.title,
+        summary: '赛恩财经，提供全球股票、外汇、期货、债券、基金和数字货币等数十万种金融投资产品的实时行情和新闻资讯以及多种投资工具。',
         thumb: 'https://cnibd.oss-cn-beijing.aliyuncs.com/resource/images/sharelogo.png'
       }
     }
@@ -109,21 +108,17 @@ export default {
     background-color #fff
     .avatar
       flex-shrink 0
-      position relative
       padding 0.4rem
       margin-right 1.6rem
       border 0.1rem solid #e0e0e0
       border-radius 50%
       background-color #f5f5f5
+      &.vip
+        vip(2rem, url(../../common/image/vip-steps.png))
       .image
         width 6rem
         height 6rem
         border-radius 50%
-      .vip
-        position absolute
-        right 0
-        bottom 0
-        background-image url(../../common/image/vip-steps.png)
     .text
       font-size 0
       .name
@@ -147,4 +142,6 @@ export default {
         display -webkit-box
         -webkit-line-clamp 2
         -webkit-box-orient vertical
+  .loading-container
+    margin-top 40%
 </style>

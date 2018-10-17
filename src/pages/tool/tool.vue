@@ -88,8 +88,8 @@ export default {
       sySL: 1,
       zfSL: 8,
       shareVal: {
-        title: '赛恩财经——个税计算器',
-        summary: '赛恩财经，提供全球股票,外汇,期货,债券,基金和数字货币等数十万种金融投资产品的实时行情和新闻资讯,以及多种投资工具。',
+        title: document.title,
+        summary: '赛恩财经，提供全球股票、外汇、期货、债券、基金和数字货币等数十万种金融投资产品的实时行情和新闻资讯以及多种投资工具。',
         thumb: 'https://cnibd.oss-cn-beijing.aliyuncs.com/resource/images/sharelogo.png'
       }
     }

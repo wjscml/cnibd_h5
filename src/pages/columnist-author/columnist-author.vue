@@ -2,20 +2,19 @@
   <transition name="slide">
     <div class="columnist-author" v-wechat-title="authorInfo.nickname">
       <div class="top-wrapper" ref="top">
-        <div class="avatar">
+        <div class="avatar" :class="{'vip': authorInfo.is_certificate === 1}">
           <img class="image" :src="authorInfo.avatar" @load="loadTop">
-          <i :class="{'vip': authorInfo.is_certificate === 1}"></i>
         </div>
         <div class="text">
           <h1 class="name">{{authorInfo.nickname}}</h1>
           <p class="intro">{{authorInfo.description}}</p>
         </div>
         <div class="focus">
-          <div class="focus-content bg-red"  v-show="!isFavorite()" @click="saveFavorite"
+          <div class="focus-content bg-red"  v-show="!authorInfo.is_follow" @click="toggleFavorite"
             ><i class="icon-add"></i><span>关&nbsp;注</span
           ></div>
           <transition name="focus">
-            <div class="focus-content" v-show="isFavorite()" @click="showConfirm">
+            <div class="focus-content" v-show="authorInfo.is_follow" @click="showConfirm">
               <i class="icon-check"></i><span>已关注</span>
             </div>
           </transition>
@@ -35,7 +34,7 @@
           <load-tips v-if="news.length" :tips="tips" :isLoad="isLoad"></load-tips>
         </div>
       </scroll>
-      <confirm @confirm="deleteFavorite" text="是否不再关注此作者" ref="confirm"></confirm>
+      <confirm @confirm="toggleFavorite" text="是否不再关注此作者" ref="confirm"></confirm>
     </div>
   </transition>
 </template>
@@ -45,11 +44,11 @@ import Confirm from '../../components/confirm/confirm'
 import Scroll from '../../components/scroll/scroll.vue'
 import NewsColumn from '../../components/news-column/news-column.vue'
 import LoadTips from '../../components/load-tips/load-tips.vue'
-import {getApi} from '../../api/getApi.js'
+import {postApi} from '../../api/getApi.js'
 import {share} from '../../common/js/share.js'
-import {mapActions, mapGetters} from 'vuex'
+import {mapGetters} from 'vuex'
 
-const ERR_OK = 0
+const ERR_OK = '0'
 export default {
   data () {
     return {
@@ -66,7 +65,7 @@ export default {
   computed: {
     ...mapGetters([
       'author',
-      'favoriteColumnist'
+      'loginState'
     ])
   },
   mounted () {
@@ -83,7 +82,24 @@ export default {
       this.$refs.list.refresh()
     },
     _getAuthor () {
-      getApi(`/author-publish?page=0&author_id=${this.$route.params.id}`).then(res => {
+      if (this.loginState.length === 0) {
+        this.params = {
+          authorId: this.$route.params.id,
+          page: 0
+        }
+        this.getAuthor()
+      }
+      if (this.loginState.errorCode === ERR_OK) {
+        this.params = {
+          authorId: this.$route.params.id,
+          page: 0,
+          session: this.loginState.data.data.session
+        }
+        this.getAuthor()
+      }
+    },
+    getAuthor () {
+      postApi('user.authorPublish', this.params).then(res => {
         if (res.data.errorCode === ERR_OK) {
           this.authorInfo = res.data.data.userInfo
           this.$nextTick(() => {
@@ -112,7 +128,11 @@ export default {
       this.tips = '正在加载...'
       this.isLoad = true
       this.page++
-      getApi(`/author-publish?page=${this.page}&author_id=${this.$route.params.id}`).then(res => {
+      let moreParams = {
+        authorId: this.$route.params.id,
+        page: this.page
+      }
+      postApi('user.authorPublish', moreParams).then(res => {
         if (res.data.errorCode === ERR_OK) {
           this.news = this.news.concat(res.data.data.publishArticles)
           this.tips = '上滑加载更多'
@@ -141,29 +161,22 @@ export default {
     touchToEnd () {
       this.loadMore()
     },
-    saveFavorite () {
-      if (!this.isFavorite()) {
-        this.saveFavoriteColumnist(this.authorInfo)
-      }
-    },
-    deleteFavorite () {
-      if (this.isFavorite()) {
-        this.deleteFavoriteColumnist(this.authorInfo)
-      }
-    },
-    isFavorite () {
-      const index = this.favoriteColumnist.findIndex((item) => {
-        return item.author_id === this.authorInfo.author_id
+    toggleFavorite () {
+      postApi('user.follow', {
+        session: this.loginState.data.data.session,
+        followUserId: this.$route.params.id
+      }).then(res => {
+        if (res.data.data.action === 1) {
+          this.authorInfo.is_follow = 1
+        }
+        if (res.data.data.action === 2) {
+          this.authorInfo.is_follow = 0
+        }
       })
-      return index > -1
     },
     showConfirm () {
       this.$refs.confirm.show()
-    },
-    ...mapActions([
-      'saveFavoriteColumnist',
-      'deleteFavoriteColumnist'
-    ])
+    }
   },
   watch: {
     scrollY (newY) {
@@ -196,6 +209,7 @@ export default {
 
 <style lang="stylus">
 @import "../../common/stylus/mixin.styl"
+@import "../../common/stylus/vip.styl"
 .columnist-author
   position fixed
   top 0
@@ -210,7 +224,6 @@ export default {
     padding 1.4rem 2rem
     background-color rgba(7,17,27,0.4)
     .avatar
-      position relative
       width 7rem
       height 7rem
       margin 0 auto
@@ -222,11 +235,8 @@ export default {
         width 7rem
         height 7rem
         border-radius 50%
-      .vip
-        position absolute
-        right 0
-        bottom 0
-        background-image url(../../common/image/vip-steps.png)
+      &.vip
+        vip(2rem, url(../../common/image/vip-steps.png))
     .text
       padding 1.5rem 2rem 0
       text-align center

@@ -10,7 +10,7 @@
             <h1 class="title">{{item.title}}</h1>
             <p class="author">{{item.author_name}}</p>
           </router-link>
-          <div class="item-icon" @click="showConfirm(item)">
+          <div class="item-icon" @click="showConfirm(item, index)">
             <i class="icon-like"></i>
           </div>
         </div>
@@ -19,14 +19,14 @@
     <scroll class="list-wrapper" :data="favoriteColumnist" v-if="currentIndex===0">
       <div class="author-list">
         <div class="author-item" v-for="(item, index) in favoriteColumnist" :key="index">
-          <router-link :to="`/columnist/${item.author_id}`" tag="div" class="item-avatar">
+          <router-link :to="`/columnist/${item.author_id}`" tag="div" class="item-avatar" :class="{'vip': item.is_certificate === 1}">
             <img :src="item.avatar">
           </router-link>
           <router-link :to="`/columnist/${item.author_id}`" tag="div" class="item-text">
             <h1 class="name">{{item.nickname}}</h1>
             <p class="info">{{item.description}}</p>
           </router-link>
-          <div class="item-icon" @click="showConfirm(item)">
+          <div class="item-icon" @click="showConfirm(item, index)">
             <i class="icon-like"></i>
           </div>
         </div>
@@ -44,11 +44,16 @@
 import Scroll from '../../components/scroll/scroll'
 import Confirm from '../../components/confirm/confirm'
 import Switches from '../../components/switches/switches'
-import {mapGetters, mapActions} from 'vuex'
+import {postApi} from '../../api/getApi.js'
+import {mapGetters} from 'vuex'
+import {share} from '../../common/js/share.js'
 
+const ERR_OK = '0'
 export default {
   data () {
     return {
+      favoriteList: [],
+      favoriteColumnist: [],
       currentIndex: 0,
       switches: [
         {
@@ -60,8 +65,16 @@ export default {
       ],
       currentNews: [],
       currentAuthor: [],
-      confirmText: ''
+      confirmText: '',
+      shareVal: {
+        title: document.title,
+        summary: '赛恩财经，提供全球股票、外汇、期货、债券、基金和数字货币等数十万种金融投资产品的实时行情和新闻资讯以及多种投资工具。',
+        thumb: 'https://cnibd.oss-cn-beijing.aliyuncs.com/resource/images/sharelogo.png'
+      }
     }
+  },
+  mounted () {
+    share(this.shareVal)
   },
   computed: {
     noResult () {
@@ -79,50 +92,75 @@ export default {
       }
     },
     ...mapGetters([
-      'favoriteList',
-      'favoriteColumnist'
+      'loginState'
     ])
   },
   created () {
-    console.log(this.favoriteList)
+    if (this.loginState && this.loginState.errorCode === ERR_OK) {
+      this.getFavoriteArticle()
+      this.getFavoriteColumnist()
+    } else {
+      this.$router.push('/login')
+      alert('请先登录')
+    }
   },
   methods: {
+    getFavoriteArticle () {
+      postApi('article.getKeepList', {
+        session: this.loginState.data.data.session,
+        page: 0
+      }).then(res => {
+        if (res.data.errorCode === ERR_OK) {
+          console.log(res)
+          this.favoriteList = res.data.data.publishArticles
+        }
+      })
+    },
+    getFavoriteColumnist () {
+      postApi('user.getFollowAuthorList', {
+        session: this.loginState.data.data.session,
+        page: 0
+      }).then(res => {
+        if (res.data.errorCode === ERR_OK) {
+          console.log(res)
+          this.favoriteColumnist = res.data.data
+        }
+      })
+    },
     switchItem (index) {
       this.currentIndex = index
     },
-    showConfirm (item) {
+    showConfirm (item, index) {
+      this.$refs.confirm.show()
       if (this.currentIndex === 1) {
         this.currentNews = item
         this.confirmText = '是否不再收藏此文章'
+        this.articleId = item.id
+        this.n = index
       }
       if (this.currentIndex === 0) {
         this.currentAuthor = item
         this.confirmText = `是否不再收藏 "${item.nickname}"`
+        this.followUserId = item.author_id
+        this.n = index
       }
-      this.$refs.confirm.show()
     },
     deleteFavorite () {
       if (this.currentIndex === 1) {
-        this.deleteFavoriteList(this.currentNews)
+        postApi('article.keep', {
+          session: this.loginState.data.data.session,
+          articleId: this.articleId
+        }).then(res => {
+          this.favoriteList = this.favoriteList.slice(0, this.n).concat(this.favoriteList.slice(this.n + 1))
+        })
       }
       if (this.currentIndex === 0) {
-        this.deleteFavoriteColumnist(this.currentAuthor)
-      }
-    },
-    ...mapActions([
-      'deleteFavoriteList',
-      'deleteFavoriteColumnist'
-    ])
-  },
-  watch: {
-    noResult () {
-      if (this.favoriteList === []) {
-        this.tips = '暂无收藏文章'
-        return true
-      }
-      if (this.favoriteColumnist === []) {
-        this.tips = '暂无收藏作者'
-        return true
+        postApi('user.follow', {
+          session: this.loginState.data.data.session,
+          followUserId: this.followUserId
+        }).then(res => {
+          this.favoriteColumnist = this.favoriteColumnist.slice(0, this.n).concat(this.favoriteColumnist.slice(this.n + 1))
+        })
       }
     }
   },
@@ -136,7 +174,7 @@ export default {
 
 <style lang="stylus">
 @import "../../common/stylus/mixin.styl"
-
+@import "../../common/stylus/vip.styl"
 .favor
   .switches-wrapper
     margin-top -0.1rem
@@ -195,6 +233,8 @@ export default {
           border-1px(rgba(7,17,27,0))
         .item-avatar
           margin-right 1.4rem
+          &.vip
+            vip(1.6rem, url(../../common/image/vip-steps.png))
           img
             width 5rem
             height 5rem

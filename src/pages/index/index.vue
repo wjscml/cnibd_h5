@@ -28,7 +28,7 @@
         <load-tips :tips="downTips" class="pulldown-tips"></load-tips>
       </div>
     </scroll>
-    <loading v-show="!news.length" :title="''"></loading>
+    <loading class="loading-container" v-show="!news.length" :title="''"></loading>
     <transition name="fade">
       <div class="nav-more-wrapper" v-show="isMoreTab">
         <div>
@@ -71,13 +71,17 @@ export default {
       isLoad: null,
       isMoreTab: null,
       shareVal: {
-        title: '赛恩财经:聚合财经新媒体',
-        summary: '赛恩财经，提供全球股票,外汇,期货,债券,基金和数字货币等数十万种金融投资产品的实时行情和新闻资讯,以及多种投资工具。',
+        title: document.title,
+        summary: '赛恩财经，提供全球股票、外汇、期货、债券、基金和数字货币等数十万种金融投资产品的实时行情和新闻资讯以及多种投资工具。',
         thumb: 'https://cnibd.oss-cn-beijing.aliyuncs.com/resource/images/sharelogo.png'
       }
     }
   },
   created () {
+    if (window.history.length <= 1) {
+      removeType()
+      removeScrollHeight()
+    }
     this.scrollX = true
     this.scrollY = false
     this.eventPassthrough = 'vertical'
@@ -236,10 +240,6 @@ export default {
       }
     }
   },
-  beforeDestroy () {
-    removeType()
-    removeScrollHeight()
-  },
   components: {
     'news-column': NewsColumn,
     'load-tips': LoadTips,
@@ -335,6 +335,8 @@ export default {
       position absolute
       top -4rem
       left 0
+.loading-container
+  margin-top 30%
 .nav-more-wrapper
   display flex
   flex-direction column

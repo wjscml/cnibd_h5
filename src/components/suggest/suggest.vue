@@ -13,9 +13,9 @@ import Scroll from '../scroll/scroll'
 import NewsColumn from '../news-column/news-column'
 import LoadTips from '../../components/load-tips/load-tips.vue'
 import Loading from '../../components/loading/loading.vue'
-import {getApi} from '../../api/getApi.js'
+import {postApi} from '../../api/getApi.js'
 
-const ERR_OK = 0
+const ERR_OK = '0'
 export default {
   data () {
     return {
@@ -44,7 +44,11 @@ export default {
       this.hasMore = true
       this.title = '正在载入...'
       this.hasGif = true
-      getApi(`/mobile-search?keywords=${this.query}&page=0`).then(res => {
+      let params = {
+        keywords: this.query,
+        page: 0
+      }
+      postApi('article.getSearchList', params).then(res => {
         if (res.data.errorCode === ERR_OK) {
           this.hasMore = false
           this.news = res.data.data
@@ -65,7 +69,11 @@ export default {
       this.tips = '正在加载...'
       this.isLoad = true
       this.page++
-      getApi(`/mobile-search?keywords=${this.query}&page=${this.page}`).then(res => {
+      let moreParams = {
+        keywords: this.query,
+        page: this.page
+      }
+      postApi('article.getSearchList', moreParams).then(res => {
         this.isLoad = false
         if (res.data.errorCode === ERR_OK) {
           this.news = this.news.concat(res.data.data)

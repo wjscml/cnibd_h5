@@ -18,17 +18,18 @@
             <img :src="captchaImage">
           </div>
         </div>
-        <div class="input-wrapper" :class="{'error-input': isMobileCode}" v-show="true">
+        <div class="input-wrapper" :class="{'error-input': isMobileCode}" v-show="tel && code">
           <input v-model="mobileCode" type="text" placeholder="请输入短信验证码">
-          <div class="send-code" v-show="!isSendCode" @click="getMobileCode">发送验证码</div>
-          <div class="send-code send-code-c" v-show="isSendCode">{{count}}</div>
+          <div class="send-code" v-show="!isSendCode && !isClick" @click="getMobileCode">{{sendText}}</div>
+          <div class="send-code" v-show="isClick"><loading title=""></loading></div>
+          <div class="send-code send-code-c" v-show="isSendCode">{{count}}s</div>
         </div>
         <div class="input-wrapper" :class="{'error-input': isPsw}">
-          <input v-model="password" type="password" placeholder="请输入密码">
+          <input v-model="password" type="password" placeholder="请输入密码" @keyup.enter="register">
         </div>
       </div>
       <div class="register-tips">
-        <span>注册即同意 <a>《用户注册协议》</a></span>
+        <span>注册即同意 <router-link to="/agreement">《用户注册协议》</router-link></span>
       </div>
       <div class="submit" @click="register">注册</div>
       <div class="under-submit">
@@ -44,7 +45,10 @@
 </template>
 
 <script>
+import Loading from '../../components/loading/loading'
 import {postApi} from '../../api/getApi.js'
+import {mapActions, mapGetters} from 'vuex'
+import {share} from '../../common/js/share.js'
 
 const ERR_OK = '0'
 const TIME_COUNT = 60
@@ -52,21 +56,41 @@ export default {
   data () {
     return {
       errors: [],
-      tel: null,
-      password: null,
-      code: null,
-      mobileCode: null,
-      isTel: false,
-      isPsw: false,
-      isCode: false,
-      isMobileCode: false,
+      tel: '',
+      password: '',
+      code: '',
+      mobileCode: '',
+      isTel: null,
+      isPsw: null,
+      isCode: null,
+      isMobileCode: null,
       captchaImage: '',
+      isClick: false,
       isSendCode: false,
-      count: ''
+      isCorrect: null,
+      sendText: '发送验证码',
+      count: '',
+      shareVal: {
+        title: document.title,
+        summary: '赛恩财经，提供全球股票、外汇、期货、债券、基金和数字货币等数十万种金融投资产品的实时行情和新闻资讯以及多种投资工具。',
+        thumb: 'https://cnibd.oss-cn-beijing.aliyuncs.com/resource/images/sharelogo.png'
+      }
     }
   },
+  mounted () {
+    share(this.shareVal)
+  },
+  computed: {
+    ...mapGetters([
+      'loginState'
+    ])
+  },
   created () {
-    this.getCode()
+    if (this.loginState && this.loginState.errorCode === ERR_OK) {
+      this.$router.back()
+    } else {
+      this.getCode()
+    }
   },
   methods: {
     register () {
@@ -76,7 +100,25 @@ export default {
       }
     },
     toRegister () {
-      console.log('zhuce')
+      let registerParam = {
+        captchaCodeKey: this.captchaCodeKey,
+        captchaCode: this.code,
+        mobileNumber: this.tel,
+        mobileCode: this.mobileCode,
+        password: this.password
+      }
+      postApi('user.register', registerParam).then(res => {
+        if (res.data.errorCode === ERR_OK) {
+          alert('成功注册！')
+          this.saveLoginState(res.data)
+          this.$router.push({path: '/index'})
+        } else {
+          this.errors.push(res.data.errorMessage)
+          this.isCorrect = false
+        }
+      }).catch(error => {
+        console.log(error)
+      })
     },
     checkSendCode () {
       this.isTel = false
@@ -131,13 +173,11 @@ export default {
       this.$router.push({path: '/index'})
     },
     getCode () {
-      postApi('/index?method=user.getCaptcha&format=json').then(res => {
+      postApi('user.getCaptcha').then(res => {
         if (res.data.errorCode === ERR_OK) {
           this.captchaImage = res.data.data.captchaImage
           this.captchaCodeKey = res.data.data.captchaCodeKey
         }
-
-        console.log(res)
       }).catch(error => {
         console.log(error)
       })
@@ -146,6 +186,7 @@ export default {
       this.getCode()
     },
     getMobileCode () {
+      this.isClick = true
       this.checkSendCode()
       let params = {
         captchaCodeKey: this.captchaCodeKey,
@@ -153,38 +194,41 @@ export default {
         mobileNumber: this.tel,
         usage: 1
       }
-      postApi('/index?method=user.getMobileCode&format=json', params).then(res => {
+      postApi('user.getMobileCode', params).then(res => {
+        this.isClick = false
         if (res.data.errorCode === ERR_OK) {
           this.isSendCode = true
           this.errors.push(res.data.errorMessage)
-          let timer = null
+          this.isCorrect = true
           if (!this.timer) {
             this.count = TIME_COUNT
-            this.show = false
+            this.isSendCode = true
             this.timer = setInterval(() => {
               if (this.count > 0 && this.count <= TIME_COUNT) {
                 this.count--
               } else {
-                this.show = true
+                this.isSendCode = false
                 clearInterval(this.timer)
                 this.timer = null
+                this.sendText = '重新发送'
               }
             }, 1000)
           }
         } else {
           this.errors.push(res.data.errorMessage)
+          this.isCorrect = false
+          this.getCode()
         }
-
-        console.log(res)
       }).catch(error => {
         console.log(error)
       })
-    }
+    },
+    ...mapActions([
+      'saveLoginState'
+    ])
   },
-  watch: {
-    tel () {
-      console.log(this.tel.length)
-    }
+  components: {
+    'loading': Loading
   }
 }
 </script>
@@ -297,7 +341,7 @@ export default {
         color #fff
         background-color #f1403c
         &.correct-text
-          background-color green
+          background-color #0ea600
       &.error-enter-active
         animation show-error 4s ease
 @keyframes show-error

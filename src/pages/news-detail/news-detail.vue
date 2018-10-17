@@ -15,19 +15,21 @@
     <div class="loading-container" v-show="isLoading">
       <loading></loading>
     </div>
-    <floating-btn :isShow="isShow" :getClass="getFavoriteIcon()" @gotop="gotop" @gonext="gonext" @golast="golast" @toggle="toggleFavorite"></floating-btn>
+    <floating-btn :isShow="isShow" :getClass="!newsDetails.isKeep ? 'icon-favor' : 'icon-favor_fill'" @gotop="gotop" @gonext="gonext" @golast="golast" @toggle="toggleFavorite"></floating-btn>
+    <confirm @confirm="goLogin" text="登录后方可收藏本文~" confirmBtnText="去登录" ref="confirm"></confirm>
   </div>
 </template>
 
 <script>
 import {share} from '../../common/js/share.js'
-import {getApi} from '../../api/getApi.js'
+import {postApi} from '../../api/getApi.js'
 import {addTableBox} from '../../common/js/htmlUtil.js'
 import Loading from '../../components/loading/loading.vue'
 import FloatingBtn from '../../components/floating-btn/floating-btn.vue'
-import {mapActions, mapGetters} from 'vuex'
+import Confirm from '../../components/confirm/confirm'
+import {mapGetters} from 'vuex'
 
-const ERR_OK = 0
+const ERR_OK = '0'
 var scrollTimer
 export default {
   data () {
@@ -44,7 +46,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'favoriteList'
+      'loginState'
     ])
   },
   mounted () {
@@ -61,7 +63,23 @@ export default {
       }, 200)
     },
     httpGet () {
-      getApi(`/detail?article_id=${this.$route.params.id}`).then(res => {
+      if (this.loginState.length === 0) {
+        this.params = {
+          articleId: this.$route.params.id
+        }
+        this.getDetail()
+      }
+      if (this.loginState.errorCode === ERR_OK) {
+        this.params = {
+          articleId: this.$route.params.id,
+          session: this.loginState.data.data.session
+        }
+        this.getDetail()
+      }
+    },
+    getDetail () {
+      postApi('article.getDetail', this.params).then(res => {
+        console.log(res)
         // console.log(window.location.pathname)
         if (res.data.errorCode === ERR_OK) {
           this.newsDetails = res.data.data
@@ -91,29 +109,28 @@ export default {
         this.$router.push(`/site/${this.newsDetails.article_before.id}`)
       }
     },
-    getFavoriteIcon () {
-      if (this.isFavorite()) {
-        return 'icon-favor_fill'
-      }
-      return 'icon-favor'
-    },
     toggleFavorite () {
-      if (this.isFavorite()) {
-        this.deleteFavoriteList(this.article)
+      if (this.loginState && this.loginState.errorCode === ERR_OK) {
+        postApi('article.keep', {
+          session: this.loginState.data.data.session,
+          articleId: this.$route.params.id
+        }).then(res => {
+          if (res.data.errorCode === ERR_OK) {
+            if (res.data.data.action === 1) {
+              this.newsDetails.isKeep = 1
+            }
+            if (res.data.data.action === 2) {
+              this.newsDetails.isKeep = 0
+            }
+          }
+        })
       } else {
-        this.saveFavoriteList(this.article)
+        this.$refs.confirm.show()
       }
     },
-    isFavorite () {
-      const index = this.favoriteList.findIndex((item) => {
-        return item.id === this.article.id
-      })
-      return index > -1
-    },
-    ...mapActions([
-      'saveFavoriteList',
-      'deleteFavoriteList'
-    ])
+    goLogin () {
+      this.$router.push('/login')
+    }
   },
   watch: {
     '$route' (to, from) {
@@ -125,7 +142,8 @@ export default {
   },
   components: {
     'loading': Loading,
-    'floating-btn': FloatingBtn
+    'floating-btn': FloatingBtn,
+    'confirm': Confirm
   }
 }
 </script>
@@ -169,6 +187,7 @@ export default {
         font-size: 1.4rem
         color: #999
   .article-content
+    padding-bottom 2rem
     font-size: 1.6rem
     color: #333
     p

@@ -11,7 +11,7 @@ export function getApi (apiRoute) {
 export function postApi (apiRoute, param) {
   return request({
     method: 'post',
-    url: apiRoute,
+    url: `/index?method=${apiRoute}&format=json`,
     data: param,
     headers: {
       'Content-type': 'application/x-www-form-urlencoded'

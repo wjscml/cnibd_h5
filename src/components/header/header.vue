@@ -1,10 +1,10 @@
 <template>
   <div class="header" :class="{'noBorder': isNavList}">
     <div class="top-wrapper">
-      <div @click="goLogin" class="login-btn" v-if="!loginState">
+      <div @click="goLogin" class="login-btn" v-if="!isLogin()">
         <i class="icon-people"></i>
       </div>
-      <div @click="changePrivateNav" class="login-btn" v-if="loginState && !isNavList">
+      <div @click="changePrivateNav" class="login-btn" v-if="isLogin() && !isNavList">
         <i class="icon-people"></i>
       </div>
       <div @click="goIndex">
@@ -24,10 +24,12 @@
           </div>
       </div>
     </transition>
+    <confirm @confirm="logout" text="是否退出登陆" ref="confirm"></confirm>
   </div>
 </template>
 
 <script>
+import Confirm from '../../components/confirm/confirm'
 import {mapActions, mapGetters} from 'vuex'
 
 export default {
@@ -64,7 +66,6 @@ export default {
         },
         {
           name: '退出登陆',
-          link: '/index',
           icon: 'icon-logout'
         }
       ],
@@ -77,6 +78,12 @@ export default {
     ])
   },
   methods: {
+    isLogin () {
+      if (this.loginState && this.loginState.errorCode === '0') {
+        return true
+      }
+      return false
+    },
     changeCommonNav () {
       this.isNavList = !this.isNavList
       if (this.isNavList) {
@@ -99,15 +106,22 @@ export default {
     },
     selectNav (item) {
       if (item.icon === 'icon-logout') {
-        this.saveLoginState(false)
-        alert('已退出登陆')
+        this.$refs.confirm.show()
+      } else {
+        this.$router.push({path: item.link})
       }
-      this.$router.push({path: item.link})
       this.isNavList = false
+    },
+    logout () {
+      this.saveLoginState()
+      this.$router.push({path: '/index'})
     },
     ...mapActions([
       'saveLoginState'
     ])
+  },
+  components: {
+    'confirm': Confirm
   }
 }
 </script>

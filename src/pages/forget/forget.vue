@@ -6,7 +6,7 @@
         <i class="icon-close"></i>
       </div>
     </header>
-    <form class="register-form" @submit="checkForm">
+    <form class="register-form">
       <div class="register-content">
         <div class="input-wrapper" :class="{'error-input': isTel}">
           <input v-model="tel" type="text" placeholder="请输入手机号">
@@ -14,22 +14,24 @@
         </div>
         <div class="input-wrapper" :class="{'error-input': isCode}">
           <input v-model="code" type="text" placeholder="请输入验证码">
-          <div @click="refreshCode" class="identify-wrapper">
-            <identify :identifyCode="identifyCode"></identify>
+          <div @click="refreshCode" class="captchaImage">
+            <img :src="captchaImage">
           </div>
         </div>
-        <div class="input-wrapper" :class="{'error-input': isMobileCode}">
+        <div class="input-wrapper" :class="{'error-input': isMobileCode}" v-show="tel && code">
           <input v-model="mobileCode" type="text" placeholder="请输入短信验证码">
-          <button class="send-code">发送验证码</button>
+          <div class="send-code" v-show="!isSendCode && !isClick" @click="getMobileCode">{{sendText}}</div>
+          <div class="send-code" v-show="isClick"><loading title=""></loading></div>
+          <div class="send-code send-code-c" v-show="isSendCode">{{count}}s</div>
         </div>
         <div class="input-wrapper" :class="{'error-input': isPsw}">
-          <input v-model="password" type="password" placeholder="请输入新密码">
+          <input v-model="password" type="password" placeholder="请输入新密码" @keyup.enter="register">
         </div>
       </div>
-      <button type="submit" class="submit">确认修改</button>
+      <div class="submit" @click="register">确认修改</div>
       <transition name="error">
         <div class="error-wrapper" v-if="errors.length" ref="errorWrapper">
-          <p class="error-text" v-for="(error, index) in errors" :key="index" v-if="index == 0">{{error}}</p>
+          <p class="error-text" :class="{'correct-text': isCorrect}" v-for="(error, index) in errors" :key="index" v-if="index == 0">{{error}}</p>
         </div>
       </transition>
     </form>
@@ -37,42 +39,105 @@
 </template>
 
 <script>
-import Identify from '../../components/identify/identify'
+import Loading from '../../components/loading/loading'
+import {postApi} from '../../api/getApi.js'
+import {mapActions, mapGetters} from 'vuex'
+import {share} from '../../common/js/share.js'
 
+const ERR_OK = '0'
+const TIME_COUNT = 60
 export default {
   data () {
     return {
       errors: [],
-      tel: null,
-      password: null,
-      code: null,
-      mobileCode: null,
-      isTel: false,
-      isPsw: false,
-      isCode: false,
-      isMobileCode: false,
-      identifyCodes: '234567890ASDFGHJKLZXCVBNMQWERTYUOP',
-      identifyCode: ''
+      tel: '',
+      password: '',
+      code: '',
+      mobileCode: '',
+      isTel: null,
+      isPsw: null,
+      isCode: null,
+      isMobileCode: null,
+      captchaImage: '',
+      isClick: false,
+      isSendCode: false,
+      isCorrect: null,
+      sendText: '发送验证码',
+      count: '',
+      shareVal: {
+        title: document.title,
+        summary: '赛恩财经，提供全球股票、外汇、期货、债券、基金和数字货币等数十万种金融投资产品的实时行情和新闻资讯以及多种投资工具。',
+        thumb: 'https://cnibd.oss-cn-beijing.aliyuncs.com/resource/images/sharelogo.png'
+      }
     }
   },
   mounted () {
-    this.identifyCode = ''
-    this.makeCode(this.identifyCodes, 4)
+    share(this.shareVal)
+  },
+  computed: {
+    ...mapGetters([
+      'loginState'
+    ])
+  },
+  created () {
+    if (this.loginState && this.loginState.errorCode === ERR_OK) {
+      this.$router.back()
+    } else {
+      this.getCode()
+    }
   },
   methods: {
-    checkForm (e) {
-      this.errors = []
-      this.isTel = false
-      this.isPsw = false
-      if (this.tel && this.password && this.code && this.mobileCode) {
-        return true
+    register () {
+      this.checkForm()
+      if (this.checkForm()) {
+        this.toRegister()
       }
+    },
+    toRegister () {
+      let registerParam = {
+        captchaCodeKey: this.captchaCodeKey,
+        captchaCode: this.code,
+        mobileNumber: this.tel,
+        mobileCode: this.mobileCode,
+        password: this.password
+      }
+      postApi('user.retrievePassword', registerParam).then(res => {
+        if (res.data.errorCode === ERR_OK) {
+          alert('密码重置成功！')
+          this.saveLoginState(res.data)
+          this.$router.push({path: '/index'})
+        } else {
+          this.errors.push(res.data.errorMessage)
+          this.isCorrect = false
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    checkSendCode () {
+      this.isTel = false
+      this.isCode = false
       if (!this.tel) {
         this.errors.push('请输入手机号码')
         this.isTel = true
       } else if (!this.validTel(this.tel)) {
         this.errors.push('请输入正确的手机号码')
         this.isTel = true
+      }
+      if (!this.code) {
+        this.errors.push('请输入验证码')
+        this.isCode = true
+      }
+      setTimeout(() => {
+        this.errors = []
+      }, 4000)
+    },
+    checkLastInfo () {
+      this.isMobileCode = false
+      this.isPsw = false
+      if (!this.mobileCode) {
+        this.errors.push('请输入短信验证码')
+        this.isMobileCode = true
       }
       if (!this.password) {
         this.errors.push('请输入密码')
@@ -81,31 +146,19 @@ export default {
         this.errors.push('请设置6~18位密码')
         this.isPsw = true
       }
-      if (!this.code) {
-        this.errors.push('请输入验证码')
-        this.isCode = true
-      } else if (this.upperCase(this.code) !== this.identifyCode) {
-        this.errors.push('验证码不正确')
-        this.isCode = true
-      }
-      if (!this.mobileCode) {
-        this.errors.push('请输入短信验证码')
-        this.isMobileCode = true
-      }
+    },
+    checkForm () {
+      this.checkSendCode()
+      this.checkLastInfo()
       if (!this.errors.length) {
         return true
+      } else {
+        return false
       }
-      setTimeout(() => {
-        this.errors = []
-      }, 4000)
-      e.preventDefault()
     },
     validTel (tel) {
       var re = /^[0-9]{11}$/
       return re.test(tel)
-    },
-    upperCase (str) {
-      return str.toUpperCase()
     },
     clearTel () {
       this.tel = ''
@@ -113,21 +166,63 @@ export default {
     close () {
       this.$router.push({path: '/index'})
     },
-    randomNum (min, max) {
-      return Math.floor(Math.random() * (max - min) + min)
+    getCode () {
+      postApi('user.getCaptcha').then(res => {
+        if (res.data.errorCode === ERR_OK) {
+          this.captchaImage = res.data.data.captchaImage
+          this.captchaCodeKey = res.data.data.captchaCodeKey
+        }
+      }).catch(error => {
+        console.log(error)
+      })
     },
     refreshCode () {
-      this.identifyCode = ''
-      this.makeCode(this.identifyCodes, 4)
+      this.getCode()
     },
-    makeCode (o, l) {
-      for (let i = 0; i < l; i++) {
-        this.identifyCode += this.identifyCodes[this.randomNum(0, this.identifyCodes.length)]
+    getMobileCode () {
+      this.isClick = true
+      this.checkSendCode()
+      let params = {
+        captchaCodeKey: this.captchaCodeKey,
+        captchaCode: this.code,
+        mobileNumber: this.tel,
+        usage: 2
       }
-    }
+      postApi('user.getMobileCode', params).then(res => {
+        this.isClick = false
+        if (res.data.errorCode === ERR_OK) {
+          this.isSendCode = true
+          this.errors.push(res.data.errorMessage)
+          this.isCorrect = true
+          if (!this.timer) {
+            this.count = TIME_COUNT
+            this.isSendCode = true
+            this.timer = setInterval(() => {
+              if (this.count > 0 && this.count <= TIME_COUNT) {
+                this.count--
+              } else {
+                this.isSendCode = false
+                clearInterval(this.timer)
+                this.timer = null
+                this.sendText = '重新发送'
+              }
+            }, 1000)
+          }
+        } else {
+          this.errors.push(res.data.errorMessage)
+          this.isCorrect = false
+          this.getCode()
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    ...mapActions([
+      'saveLoginState'
+    ])
   },
   components: {
-    'identify': Identify
+    'loading': Loading
   }
 }
 </script>
@@ -179,8 +274,10 @@ export default {
           outline none
           border none
           caret-color #1f8bee
-        .identify-wrapper
+        .captchaImage
           overflow hidden
+          img
+            height 4rem
         .send-code
           width 10rem
           font-size 1.4rem
@@ -188,6 +285,9 @@ export default {
           color #1f8bee
           outline none
           border none
+          text-align center
+          &.send-code-c
+            color #757575
         .icon-dismiss
           width 2.2rem
           font-size 1.8rem
@@ -203,6 +303,7 @@ export default {
       border-radius .4rem
       background-color #1f8bee
       color #fff
+      text-align center
     .error-wrapper
       position absolute
       top -1rem
@@ -217,6 +318,8 @@ export default {
         text-align center
         color #fff
         background-color #f1403c
+        &.correct-text
+          background-color #0ea600
       &.error-enter-active
         animation show-error 4s ease
 @keyframes show-error

@@ -1,11 +1,11 @@
-import {loadSearch, loadFavorite, loadColumnist} from '../common/js/cache'
+import {loadSearch, loadFavorite, loadColumnist, loadLogin} from '../common/js/cache'
 
 const state = {
   author: {},
   searchHistory: loadSearch(),
   favoriteList: loadFavorite(),
   favoriteColumnist: loadColumnist(),
-  loginState: false
+  loginState: loadLogin()
 }
 
 export default state
