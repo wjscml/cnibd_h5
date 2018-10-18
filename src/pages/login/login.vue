@@ -29,7 +29,7 @@
         </transition>
       </form>
     </div>
-    <div class="login-wx" v-if="isWeiXin">
+    <div class="login-wx" v-if="true">
       <i class="icon-weixin" @click="wxLogin"></i>
       <p>微信登录</p>
     </div>
@@ -146,7 +146,7 @@ export default {
       'saveLoginState'
     ]),
     wxLogin () {
-      window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?' + 'appid=wx70d395942c321a44&redirect_uri=https://www.cnibd.com&response_type=code&scope=snsapi_userinfo&state=1&connect_redirect=1#wechat_redirect'
+      window.location.href = 'https://open.weixin.qq.com/connect/qrconnect?appid=wx70d395942c321a44&redirect_uri=https://www.cnibd.com/about&response_type=code&scope=snsapi_login&state=STATE'
     }
   }
 }
