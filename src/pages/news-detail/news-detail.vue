@@ -79,7 +79,6 @@ export default {
     },
     getDetail () {
       postApi('article.getDetail', this.params).then(res => {
-        console.log(res)
         // console.log(window.location.pathname)
         if (res.data.errorCode === ERR_OK) {
           this.newsDetails = res.data.data

@@ -21,7 +21,7 @@
       </scroll>
     </div>
     <div style="font-size: 0; line-height: 0" ref="newsMark"></div>
-    <scroll @scroll="scroll" @scroll-end="scrollEnd" @touchToEnd="touchToEnd" @scrollToTop="scrollToTop" @pullingDown="pullingDown" :data="news" :probeType="probeType" :listenScrollEnd="listenScrollEnd" :pullUpLoad="pullUpLoad" :pullDownRefresh="pullDownRefresh" class="news-wrapper" ref="newsWrapper">
+    <scroll @scroll="scroll" @scroll-end="scrollEnd" @touchToEnd="touchToEnd" @scrollToTop="scrollToTop" :data="news" :probeType="probeType" :listenScrollEnd="listenScrollEnd" :pullUpLoad="pullUpLoad" :pullDownRefresh="pullDownRefresh" class="news-wrapper" ref="newsWrapper">
       <div class="news-content">
         <news-column :news="news"></news-column>
         <load-tips :tips="tips" :isLoad="isLoad" v-if="news.length"></load-tips>
@@ -53,7 +53,7 @@ import LoadTips from '../../components/load-tips/load-tips.vue'
 import Loading from '../../components/loading/loading.vue'
 import {getApi} from '../../api/getApi.js'
 import {share} from '../../common/js/share.js'
-import {saveNewslist, loadNewslist, removeNewslist, saveType, loadType, removeType, saveScrollHeight, loadScrollHeight, removeScrollHeight} from '../../common/js/cache'
+import {saveNewslist, loadNewslist, removeNewslist, saveType, loadType, saveScrollHeight, loadScrollHeight} from '../../common/js/cache'
 
 const ERR_OK = 0
 export default {
@@ -77,11 +77,14 @@ export default {
       }
     }
   },
-  created () {
-    if (window.history.length <= 1) {
-      removeType()
-      removeScrollHeight()
+  beforeRouteEnter (to, from, next) {
+    if (window.history.length <= 1 || from.path !== '/') {
+      saveType()
+      saveScrollHeight()
     }
+    next()
+  },
+  created () {
     this.scrollX = true
     this.scrollY = false
     this.eventPassthrough = 'vertical'

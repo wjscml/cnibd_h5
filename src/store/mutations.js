@@ -10,9 +10,6 @@ const mutations = {
   [types.SET_FAVORITE_LIST] (state, list) {
     state.favoriteList = list
   },
-  [types.SET_FAVORITE_COLUMNIST] (state, columnist) {
-    state.favoriteColumnist = columnist
-  },
   [types.SET_LOGIN_STATE] (state, loginState) {
     state.loginState = loginState
   }

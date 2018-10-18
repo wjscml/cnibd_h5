@@ -8,14 +8,12 @@ const LOGIN_KEY = '__login__'
 const FAVORITE_KEY = '__favorite__'
 const FAVORITE_MAX_LENGTH = 100
 
-const FAVORITE_COLUMNIST_KEY = '__columnist__'
-const FAVORITE_COLUMNIST_MAX_LENGTH = 100
-
 const NEWSLIST_KEY = '__newslist__'
-
 const TYPE_KEY = '__type__'
-
 const SCROLL_HEIGHT_KEY = '__height__'
+
+const COLUMNIST_KEY = '__columnist__'
+const COLUMNIST_HEIGHT_KEY = '__columnistHeight__'
 
 function insertArray (arr, val, compare, maxLen) {
   const index = arr.findIndex(compare)
@@ -87,28 +85,6 @@ export function loadFavorite () {
   return storage.get(FAVORITE_KEY, [])
 }
 
-export function saveColumnist (author) {
-  let authors = storage.get(FAVORITE_COLUMNIST_KEY, [])
-  insertArray(authors, author, (item) => {
-    return author.author_id === item.author_id
-  }, FAVORITE_COLUMNIST_MAX_LENGTH)
-  storage.set(FAVORITE_COLUMNIST_KEY, authors)
-  return authors
-}
-
-export function deleteColumnist (author) {
-  let authors = storage.get(FAVORITE_COLUMNIST_KEY, [])
-  deleteFromArray(authors, (item) => {
-    return author.author_id === item.author_id
-  })
-  storage.set(FAVORITE_COLUMNIST_KEY, authors)
-  return authors
-}
-
-export function loadColumnist () {
-  return storage.get(FAVORITE_COLUMNIST_KEY, [])
-}
-
 // 首页新闻列表
 export function saveNewslist (news) {
   storage.set(NEWSLIST_KEY, news)
@@ -129,11 +105,6 @@ export function saveType (type) {
   return type
 }
 
-export function removeType () {
-  storage.remove(TYPE_KEY)
-  return []
-}
-
 export function loadType () {
   return storage.get(TYPE_KEY, [])
 }
@@ -143,13 +114,27 @@ export function saveScrollHeight (height) {
   return height
 }
 
-export function removeScrollHeight () {
-  storage.remove(SCROLL_HEIGHT_KEY)
-  return []
-}
-
 export function loadScrollHeight () {
   return storage.get(SCROLL_HEIGHT_KEY, [])
+}
+
+// columnist
+export function saveColumnist (columnist) {
+  storage.set(COLUMNIST_KEY, columnist)
+  return columnist
+}
+
+export function loadColumnist () {
+  return storage.get(COLUMNIST_KEY, [])
+}
+
+export function saveColumnistHeight (height) {
+  storage.set(COLUMNIST_HEIGHT_KEY, height)
+  return height
+}
+
+export function loadColumnistHeight () {
+  return storage.get(COLUMNIST_HEIGHT_KEY, [])
 }
 
 // login

@@ -3,7 +3,7 @@
     <div class="switches-wrapper">
       <switches @switch="switchItem" :switches="switches" :currentIndex="currentIndex"></switches>
     </div>
-    <scroll class="list-wrapper" :data="favoriteList" v-if="currentIndex===1">
+    <scroll class="list-wrapper" :data="favoriteList" v-if="currentIndex===1" :pullupLoad="pullUpLoad" @touchToEnd="loadMore">
       <div class="news-list">
         <div class="news-item" v-for="(item, index) in favoriteList" :key="index">
           <router-link :to="`/site/${item.id}`" tag="div" class="item-text">
@@ -14,9 +14,10 @@
             <i class="icon-like"></i>
           </div>
         </div>
+        <load-tips v-show="favoriteList.length" :tips="tips" :isLoad="isLoad"></load-tips>
       </div>
     </scroll>
-    <scroll class="list-wrapper" :data="favoriteColumnist" v-if="currentIndex===0">
+    <scroll class="list-wrapper" :data="favoriteColumnist" v-if="currentIndex===0" :pullUpLoad="pullUpLoad" @touchToEnd="loadMore">
       <div class="author-list">
         <div class="author-item" v-for="(item, index) in favoriteColumnist" :key="index">
           <router-link :to="`/columnist/${item.author_id}`" tag="div" class="item-avatar" :class="{'vip': item.is_certificate === 1}">
@@ -30,6 +31,7 @@
             <i class="icon-like"></i>
           </div>
         </div>
+        <load-tips v-show="favoriteColumnist.length" :tips="tips" :isLoad="isLoad"></load-tips>
       </div>
     </scroll>
     <confirm @confirm="deleteFavorite" :text="confirmText" ref="confirm"></confirm>
@@ -44,6 +46,7 @@
 import Scroll from '../../components/scroll/scroll'
 import Confirm from '../../components/confirm/confirm'
 import Switches from '../../components/switches/switches'
+import LoadTips from '../../components/load-tips/load-tips.vue'
 import {postApi} from '../../api/getApi.js'
 import {mapGetters} from 'vuex'
 import {share} from '../../common/js/share.js'
@@ -66,6 +69,9 @@ export default {
       currentNews: [],
       currentAuthor: [],
       confirmText: '',
+      page: 0,
+      tips: '上滑加载更多',
+      isLoad: null,
       shareVal: {
         title: document.title,
         summary: '赛恩财经，提供全球股票、外汇、期货、债券、基金和数字货币等数十万种金融投资产品的实时行情和新闻资讯以及多种投资工具。',
@@ -99,6 +105,7 @@ export default {
     if (this.loginState && this.loginState.errorCode === ERR_OK) {
       this.getFavoriteArticle()
       this.getFavoriteColumnist()
+      this.pullUpLoad = true
     } else {
       this.$router.push('/login')
       alert('请先登录')
@@ -111,7 +118,6 @@ export default {
         page: 0
       }).then(res => {
         if (res.data.errorCode === ERR_OK) {
-          console.log(res)
           this.favoriteList = res.data.data.publishArticles
         }
       })
@@ -122,10 +128,52 @@ export default {
         page: 0
       }).then(res => {
         if (res.data.errorCode === ERR_OK) {
-          console.log(res)
           this.favoriteColumnist = res.data.data
         }
       })
+    },
+    loadMore () {
+      this.tips = '加载中...'
+      this.isLoad = true
+      this.page++
+      if (this.currentIndex === 1) {
+        postApi('article.getKeepList', {
+          session: this.loginState.data.data.session,
+          page: this.page
+        }).then((res) => {
+          this.isLoad = false
+          if (res.data.errorCode === ERR_OK) {
+            this.favoriteList = this.favoriteList.concat(res.data.data.publishArticles)
+            this.tips = '上滑加载更多'
+          } else {
+            this.tips = '没有更多数据了~'
+          }
+        }).catch(error => {
+          if (!error.res) {
+            this.isLoad = false
+            this.tips = '网络不给力，请稍后重试'
+          }
+        })
+      }
+      if (this.currentIndex === 0) {
+        postApi('user.getFollowAuthorList', {
+          session: this.loginState.data.data.session,
+          page: this.page
+        }).then((res) => {
+          this.isLoad = false
+          if (res.data.errorCode === ERR_OK) {
+            this.favoriteColumnist = this.favoriteColumnist.concat(res.data.data)
+            this.tips = '上滑加载更多'
+          } else {
+            this.tips = '没有更多数据了~'
+          }
+        }).catch(error => {
+          if (!error.res) {
+            this.isLoad = false
+            this.tips = '网络不给力，请稍后重试'
+          }
+        })
+      }
     },
     switchItem (index) {
       this.currentIndex = index
@@ -167,7 +215,8 @@ export default {
   components: {
     'switches': Switches,
     'confirm': Confirm,
-    'scroll': Scroll
+    'scroll': Scroll,
+    'load-tips': LoadTips
   }
 }
 </script>

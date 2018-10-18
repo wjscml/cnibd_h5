@@ -10,11 +10,11 @@
           <p class="intro">{{authorInfo.description}}</p>
         </div>
         <div class="focus">
-          <div class="focus-content bg-red"  v-show="!authorInfo.is_follow" @click="toggleFavorite"
+          <div class="focus-content bg-red"  v-if="!authorInfo.is_follow" @click="toggleFavorite"
             ><i class="icon-add"></i><span>关&nbsp;注</span
           ></div>
           <transition name="focus">
-            <div class="focus-content" v-show="authorInfo.is_follow" @click="showConfirm">
+            <div class="focus-content" v-if="authorInfo.is_follow" @click="showConfirm">
               <i class="icon-check"></i><span>已关注</span>
             </div>
           </transition>
@@ -34,7 +34,7 @@
           <load-tips v-if="news.length" :tips="tips" :isLoad="isLoad"></load-tips>
         </div>
       </scroll>
-      <confirm @confirm="toggleFavorite" text="是否不再关注此作者" ref="confirm"></confirm>
+      <confirm @confirm="confirmOK" :text="confirmText" ref="confirm"></confirm>
     </div>
   </transition>
 </template>
@@ -59,7 +59,8 @@ export default {
       isLoad: null,
       scrollY: 0,
       isScrollTop: null,
-      shareVal: {}
+      shareVal: {},
+      confirmText: ''
     }
   },
   computed: {
@@ -82,18 +83,17 @@ export default {
       this.$refs.list.refresh()
     },
     _getAuthor () {
-      if (this.loginState.length === 0) {
-        this.params = {
-          authorId: this.$route.params.id,
-          page: 0
-        }
-        this.getAuthor()
-      }
-      if (this.loginState.errorCode === ERR_OK) {
+      if (this.loginState && this.loginState.errorCode === ERR_OK) {
         this.params = {
           authorId: this.$route.params.id,
           page: 0,
           session: this.loginState.data.data.session
+        }
+        this.getAuthor()
+      } else {
+        this.params = {
+          authorId: this.$route.params.id,
+          page: 0
         }
         this.getAuthor()
       }
@@ -162,20 +162,36 @@ export default {
       this.loadMore()
     },
     toggleFavorite () {
-      postApi('user.follow', {
-        session: this.loginState.data.data.session,
-        followUserId: this.$route.params.id
-      }).then(res => {
-        if (res.data.data.action === 1) {
-          this.authorInfo.is_follow = 1
-        }
-        if (res.data.data.action === 2) {
-          this.authorInfo.is_follow = 0
-        }
-      })
+      if (this.loginState && this.loginState.errorCode === ERR_OK) {
+        postApi('user.follow', {
+          session: this.loginState.data.data.session,
+          followUserId: this.$route.params.id
+        }).then(res => {
+          if (res.data.data.action === 1) {
+            this.authorInfo.is_follow = 1
+          }
+          if (res.data.data.action === 2) {
+            this.authorInfo.is_follow = 0
+          }
+        })
+      } else {
+        this.showConfirm()
+      }
     },
     showConfirm () {
+      if (this.loginState && this.loginState.errorCode === ERR_OK) {
+        this.confirmText = '是否不再关注此作者'
+      } else {
+        this.confirmText = '登录后方可关注作者'
+      }
       this.$refs.confirm.show()
+    },
+    confirmOK () {
+      if (this.loginState && this.loginState.errorCode === ERR_OK) {
+        this.toggleFavorite()
+      } else {
+        this.$router.push('/login')
+      }
     }
   },
   watch: {

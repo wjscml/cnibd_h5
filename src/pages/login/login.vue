@@ -29,8 +29,8 @@
         </transition>
       </form>
     </div>
-    <div class="login-wx">
-      <i class="icon-weixin"></i>
+    <div class="login-wx" v-if="isWeiXin">
+      <i class="icon-weixin" @click="wxLogin"></i>
       <p>微信登录</p>
     </div>
   </div>
@@ -69,8 +69,17 @@ export default {
     if (this.loginState && this.loginState.errorCode === ERR_OK) {
       this.$router.back()
     }
+    this.isWeiXin()
   },
   methods: {
+    isWeiXin () {
+      let ua = window.navigator.userAgent.toLowerCase()
+      if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+        return true
+      } else {
+        return false
+      }
+    },
     login () {
       this.checkForm()
       if (this.checkForm()) {
@@ -85,6 +94,7 @@ export default {
       postApi('user.login', loginParam).then(res => {
         if (res.data.errorCode === ERR_OK) {
           alert('成功登陆！')
+
           this.saveLoginState(res.data)
           if (window.history.length <= 1) {
             this.$router.push({path: '/index'})
@@ -134,7 +144,10 @@ export default {
     },
     ...mapActions([
       'saveLoginState'
-    ])
+    ]),
+    wxLogin () {
+      window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?' + 'appid=wx70d395942c321a44&redirect_uri=https://www.cnibd.com&response_type=code&scope=snsapi_userinfo&state=1&connect_redirect=1#wechat_redirect'
+    }
   }
 }
 </script>
