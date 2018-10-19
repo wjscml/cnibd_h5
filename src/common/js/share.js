@@ -1,54 +1,29 @@
 import wx from 'weixin-js-sdk'
-import {postApi} from '../../api/getApi.js'
+import {getApi} from '../../api/getApi.js'
 
-export function wxInit (sd) {
+export function wxInit (val) {
   let links = `${window.location.href}`
-  let title = sd.title
-  let desc = sd.summary
-  let imgUrl = sd.thumb
+  let title = val.title
+  let desc = val.summary
+  let imgUrl = val.thumb
   wx.ready(function () {
-    wx.onMenuShareTimeline({
+    wx.updateAppMessageShareData({
       title: title, // 分享标题
       desc: desc, // 分享描述
       link: links, // 分享链接
-      imgUrl: imgUrl, // 分享图标
-      success: function () {
-      },
-      cancel: function () {
-      }
+      imgUrl: imgUrl // 分享图标
+    }, function (res) {
+      // 这里是回调函数
     })
-    // 微信分享菜单测试
-    wx.onMenuShareAppMessage({
+    wx.updateTimelineShareData({
       title: title, // 分享标题
-      desc: desc, // 分享描述
       link: links, // 分享链接
-      imgUrl: imgUrl, // 分享图标
-      success: function () {
-      },
-      cancel: function () {
-      }
+      imgUrl: imgUrl // 分享图标
+    }, function (res) {
+      // 这里是回调函数
     })
-    wx.onMenuShareQQ({
-      title: title, // 分享标题
-      desc: desc, // 分享描述
-      link: links, // 分享链接
-      imgUrl: imgUrl, // 分享图标
-      success: function () {
-      },
-      cancel: function () {
-      }
-    })
+
     wx.onMenuShareWeibo({
-      title: title, // 分享标题
-      desc: desc, // 分享描述
-      link: links, // 分享链接
-      imgUrl: imgUrl, // 分享图标
-      success: function () {
-      },
-      cancel: function () {
-      }
-    })
-    wx.onMenuShareQZone({
       title: title, // 分享标题
       desc: desc, // 分享描述
       link: links, // 分享链接
@@ -66,16 +41,17 @@ export function wxInit (sd) {
 
 export function share (val) {
   let url = encodeURIComponent(`${window.location.href}`)
-  postApi('site.sign', {shareUrl: url}).then(res => {
-    if (res.data.errorCode === '0') {
+  console.log(url)
+  getApi(`/sign?share_url=${url}`).then(res => {
+    if (res.data.errorCode === 0) {
       wx.config({
-        debug: false,
-        appId: res.data.data.signPackage.appId,
+        debug: true,
+        appId: 'wxb5b03bf29736518a',
         timestamp: res.data.data.signPackage.timestamp,
         nonceStr: res.data.data.signPackage.nonceStr,
         signature: res.data.data.signPackage.signature,
         jsApiList: [
-          'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'
+          'updateAppMessageShareData', 'updateTimelineShareData', 'onMenuShareWeibo'
         ]
       })
       wxInit(val)

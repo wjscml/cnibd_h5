@@ -74,7 +74,7 @@ export default {
   methods: {
     isWeiXin () {
       let ua = window.navigator.userAgent.toLowerCase()
-      if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+      if (ua.match(/MicroMessenger/i) == 'micromessenger') {//eslint-disable-line
         return true
       } else {
         return false
@@ -93,8 +93,7 @@ export default {
       }
       postApi('user.login', loginParam).then(res => {
         if (res.data.errorCode === ERR_OK) {
-          alert('成功登陆！')
-
+          this.errors.push('成功登陆！')
           this.saveLoginState(res.data)
           if (window.history.length <= 1) {
             this.$router.push({path: '/index'})
@@ -250,7 +249,7 @@ export default {
     text-align center
     .icon-weixin
       font-size 5rem
-      color #44b549
+      color #04be02
     p
       font-size 1.4rem
       color #393a4c

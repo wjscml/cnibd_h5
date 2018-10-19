@@ -341,7 +341,7 @@ export default {
         color #fff
         background-color #f1403c
         &.correct-text
-          background-color #0ea600
+          background-color #04be02
       &.error-enter-active
         animation show-error 4s ease
 @keyframes show-error
