@@ -1,5 +1,5 @@
 import wx from 'weixin-js-sdk'
-import {getApi} from '../../api/getApi.js'
+import {postApi} from '../../api/getApi.js'
 
 export function wxInit (val) {
   let links = `${window.location.href}`
@@ -64,8 +64,8 @@ export function wxInit (val) {
 
 export function share (val) {
   let url = encodeURIComponent(`${window.location.href}`)
-  getApi(`/sign?share_url=${url}`).then(res => {
-    if (res.data.errorCode === 0) {
+  postApi('site.sign', {shareUrl: url}).then(res => {
+    if (res.data.errorCode === '0') {
       wx.config({
         debug: false,
         appId: 'wxb5b03bf29736518a',
