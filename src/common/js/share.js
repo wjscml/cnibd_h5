@@ -1,5 +1,5 @@
 import wx from 'weixin-js-sdk'
-import {postApi} from '../../api/getApi.js'
+import {getApi} from '../../api/getApi.js'
 
 export function wxInit (val) {
   let links = `${window.location.href}`
@@ -7,22 +7,45 @@ export function wxInit (val) {
   let desc = val.summary
   let imgUrl = val.thumb
   wx.ready(function () {
-    wx.updateAppMessageShareData({
+    wx.onMenuShareTimeline({
+      title: title, // 分享标题
+      link: links, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+      imgUrl: imgUrl, // 分享图标
+      success: function () {
+      // 用户点击了分享后执行的回调函数
+      }
+    })
+    wx.onMenuShareAppMessage({
+      title: title, // 分享标题
+      desc: desc, // 分享描述
+      link: links, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+      imgUrl: imgUrl, // 分享图标
+      success: function () {
+      // 用户点击了分享后执行的回调函数
+      }
+    })
+    wx.onMenuShareQQ({
       title: title, // 分享标题
       desc: desc, // 分享描述
       link: links, // 分享链接
-      imgUrl: imgUrl // 分享图标
-    }, function (res) {
-      // 这里是回调函数
+      imgUrl: imgUrl, // 分享图标
+      success: function () {
+      // 用户确认分享后执行的回调函数
+      },
+      cancel: function () {
+      // 用户取消分享后执行的回调函数
+      }
     })
-    wx.updateTimelineShareData({
+    wx.onMenuShareQZone({
       title: title, // 分享标题
+      desc: desc, // 分享描述
       link: links, // 分享链接
-      imgUrl: imgUrl // 分享图标
-    }, function (res) {
-      // 这里是回调函数
+      imgUrl: imgUrl, // 分享图标
+      success: function () {
+      },
+      cancel: function () {
+      }
     })
-
     wx.onMenuShareWeibo({
       title: title, // 分享标题
       desc: desc, // 分享描述
@@ -41,7 +64,7 @@ export function wxInit (val) {
 
 export function share (val) {
   let url = encodeURIComponent(`${window.location.href}`)
-  postApi('site.sign', {shareUrl: url}).then(res => {
+  getApi(`/sign?share_url=${url}`).then(res => {
     if (res.data.errorCode === '0') {
       wx.config({
         debug: false,
@@ -50,7 +73,7 @@ export function share (val) {
         nonceStr: res.data.data.signPackage.nonceStr,
         signature: res.data.data.signPackage.signature,
         jsApiList: [
-          'updateAppMessageShareData', 'updateTimelineShareData', 'onMenuShareWeibo'
+          'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareQZone', 'onMenuShareWeibo'
         ]
       })
       wxInit(val)
