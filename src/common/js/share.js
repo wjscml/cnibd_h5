@@ -65,7 +65,7 @@ export function wxInit (val) {
 export function share (val) {
   let url = encodeURIComponent(`${window.location.href}`)
   getApi(`/sign?share_url=${url}`).then(res => {
-    if (res.data.errorCode === '0') {
+    if (res.data.errorCode === 0) {
       wx.config({
         debug: false,
         appId: 'wxb5b03bf29736518a',
