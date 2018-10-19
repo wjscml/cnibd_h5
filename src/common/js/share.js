@@ -41,7 +41,6 @@ export function wxInit (val) {
 
 export function share (val) {
   let url = encodeURIComponent(`${window.location.href}`)
-  console.log(url)
   postApi('site.sign', {shareUrl: url}).then(res => {
     if (res.data.errorCode === '0') {
       wx.config({
