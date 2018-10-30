@@ -145,7 +145,7 @@ export default {
       'saveLoginState'
     ]),
     wxLogin () {
-      window.location.href = 'https://open.weixin.qq.com/connect/qrconnect?appid=wx70d395942c321a44&redirect_uri=https://www.cnibd.com/about&response_type=code&scope=snsapi_login&state=STATE'
+      window.location.href = 'https://open.weixin.qq.com/connect/qrconnect?appid=wx49fce683f4e4aceb&redirect_uri=https://h5.cnibd.com/about&response_type=code&scope=snsapi_login&state=STATE'
     }
   }
 }

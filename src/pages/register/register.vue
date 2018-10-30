@@ -37,7 +37,7 @@
       </div>
       <transition name="error">
         <div class="error-wrapper" v-if="errors.length" ref="errorWrapper">
-          <p class="error-text" :class="{'correct-text': isSendCode}" v-for="(error, index) in errors" :key="index" v-if="index == 0">{{error}}</p>
+          <p class="error-text" :class="{'correct-text': isCorrect}" v-for="(error, index) in errors" :key="index" v-if="index == 0">{{error}}</p>
         </div>
       </transition>
     </form>

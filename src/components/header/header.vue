@@ -1,7 +1,7 @@
 <template>
   <div class="header" :class="{'noBorder': isNavList}">
     <div class="top-wrapper">
-      <div @click="goLogin" class="login-btn" v-if="!isLogin()">
+      <div @click="goLogin" class="login-btn" v-if="!isLogin() && !isNavList">
         <i class="icon-people"></i>
       </div>
       <div @click="changePrivateNav" class="login-btn" v-if="isLogin() && !isNavList">
