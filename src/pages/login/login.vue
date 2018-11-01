@@ -93,8 +93,9 @@ export default {
       }
       postApi('user.login', loginParam).then(res => {
         if (res.data.errorCode === ERR_OK) {
+          console.log(res.data)
           this.errors.push('成功登陆！')
-          this.saveLoginState(res.data)
+          this.saveLoginState(res.data.data)
           if (window.history.length <= 1) {
             this.$router.push({path: '/index'})
             return false
@@ -145,7 +146,11 @@ export default {
       'saveLoginState'
     ]),
     wxLogin () {
-      window.location.href = 'https://open.weixin.qq.com/connect/qrconnect?appid=wx49fce683f4e4aceb&redirect_uri=https://h5.cnibd.com/about&response_type=code&scope=snsapi_login&state=STATE'
+      if (this.isWeiXin()) {
+        window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx49fce683f4e4aceb&redirect_uri=https://h5.cnibd.com/wx_login&response_type=code&scope=snsapi_userinfo&state=1&connect_redirect=1#wechat_redirect'
+      } else {
+        window.location.href = 'https://open.weixin.qq.com/connect/qrconnect?appid=wx49fce683f4e4aceb&redirect_uri=https://h5.cnibd.com/wx_login&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect'
+      }
     }
   }
 }

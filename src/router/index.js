@@ -11,6 +11,12 @@ const Index = (resolve) => {
   })
 }
 
+const WxLogin = (resolve) => {
+  import('../pages/wx-login/wx-login.vue').then((module) => {
+    resolve(module)
+  })
+}
+
 const Login = (resolve) => {
   import('../pages/login/login.vue').then((module) => {
     resolve(module)
@@ -101,6 +107,13 @@ export default new Router({
       component: Index,
       meta: {
         title: '赛恩财经 - 聚合财经新媒体'
+      }
+    },
+    {
+      path: '/wx_login',
+      component: WxLogin,
+      meta: {
+        title: '微信登录中...'
       }
     },
     {

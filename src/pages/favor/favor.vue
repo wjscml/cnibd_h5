@@ -114,7 +114,7 @@ export default {
   methods: {
     getFavoriteArticle () {
       postApi('article.getKeepList', {
-        session: this.loginState.data.data.session,
+        session: this.loginState.data.session,
         page: 0
       }).then(res => {
         if (res.data.errorCode === ERR_OK) {
@@ -124,7 +124,7 @@ export default {
     },
     getFavoriteColumnist () {
       postApi('user.getFollowAuthorList', {
-        session: this.loginState.data.data.session,
+        session: this.loginState.data.session,
         page: 0
       }).then(res => {
         if (res.data.errorCode === ERR_OK) {

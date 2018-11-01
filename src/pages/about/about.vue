@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import {getApi, postApi} from '../../api/getApi.js'
+import {getApi} from '../../api/getApi.js'
 import {htmlDecode} from '../../common/js/htmlUtil.js'
 import wx from 'weixin-js-sdk'
 import {wxInit} from '../../common/js/share.js'
@@ -17,31 +17,12 @@ export default {
     }
   },
   created () {
-    this.code = this.$route.query.code
-    this.wxLogin()
     this.getAbout()
   },
   mounted () {
     this.share()
   },
   methods: {
-    wxLogin () {
-      postApi('user.wxLogin', {code: this.code}).then(res => {
-        console.log(res)
-        if (res.data.errorCode === '0') {
-          alert('成功登陆！')
-          console.log(res.data)
-          if (window.history.length <= 1) {
-            this.$router.push({path: '/index'})
-            return false
-          } else {
-            this.$router.back()
-          }
-        } else {
-          this.errors.push(res.data.errorMessage)
-        }
-      })
-    },
     getAbout () {
       getApi('/about').then(res => {
         if (res.data.errorCode === ERR_OK) {
