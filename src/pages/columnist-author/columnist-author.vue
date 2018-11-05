@@ -87,7 +87,7 @@ export default {
         this.params = {
           authorId: this.$route.params.id,
           page: 0,
-          session: this.loginState.data.data.session
+          session: this.loginState.data.session || this.loginState.data.data.session
         }
         this.getAuthor()
       } else {
@@ -164,7 +164,7 @@ export default {
     toggleFavorite () {
       if (this.loginState && this.loginState.errorCode === ERR_OK) {
         postApi('user.follow', {
-          session: this.loginState.data.data.session,
+          session: this.loginState.data.session || this.loginState.data.data.session,
           followUserId: this.$route.params.id
         }).then(res => {
           if (res.data.data.action === 1) {

@@ -63,6 +63,7 @@ export default {
       }, 200)
     },
     httpGet () {
+      console.log(this.loginState)
       if (this.loginState.length === 0) {
         this.params = {
           articleId: this.$route.params.id
@@ -72,7 +73,7 @@ export default {
       if (this.loginState.errorCode === ERR_OK) {
         this.params = {
           articleId: this.$route.params.id,
-          session: this.loginState.data.data.session
+          session: this.loginState.data.session || this.loginState.data.data.session
         }
         this.getDetail()
       }
@@ -111,7 +112,7 @@ export default {
     toggleFavorite () {
       if (this.loginState && this.loginState.errorCode === ERR_OK) {
         postApi('article.keep', {
-          session: this.loginState.data.data.session,
+          session: this.loginState.data.session || this.loginState.data.data.session,
           articleId: this.$route.params.id
         }).then(res => {
           if (res.data.errorCode === ERR_OK) {

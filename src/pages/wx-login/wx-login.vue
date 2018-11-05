@@ -30,7 +30,6 @@ export default {
         console.log(res)
         if (res.data.errorCode === '0') {
           this.saveLoginState(res.data)
-          console.log(res.data)
           this.isLogin = true
           this.$router.push({path: '/index'})
         } else {

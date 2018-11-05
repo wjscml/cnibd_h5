@@ -14,7 +14,7 @@
             <i class="icon-like"></i>
           </div>
         </div>
-        <load-tips v-show="favoriteList.length" :tips="tips" :isLoad="isLoad"></load-tips>
+        <load-tips v-show="favoriteList.length > 5" :tips="tips" :isLoad="isLoad"></load-tips>
       </div>
     </scroll>
     <scroll class="list-wrapper" :data="favoriteColumnist" v-if="currentIndex===0" :pullUpLoad="pullUpLoad" @touchToEnd="loadMore">
@@ -31,7 +31,7 @@
             <i class="icon-like"></i>
           </div>
         </div>
-        <load-tips v-show="favoriteColumnist.length" :tips="tips" :isLoad="isLoad"></load-tips>
+        <load-tips v-show="favoriteColumnist.length > 5" :tips="tips" :isLoad="isLoad"></load-tips>
       </div>
     </scroll>
     <confirm @confirm="deleteFavorite" :text="confirmText" ref="confirm"></confirm>
@@ -102,6 +102,7 @@ export default {
     ])
   },
   created () {
+    console.log(this.loginState)
     if (this.loginState && this.loginState.errorCode === ERR_OK) {
       this.getFavoriteArticle()
       this.getFavoriteColumnist()
@@ -114,20 +115,21 @@ export default {
   methods: {
     getFavoriteArticle () {
       postApi('article.getKeepList', {
-        session: this.loginState.data.session,
+        session: this.loginState.data.session || this.loginState.data.data.session,
         page: 0
       }).then(res => {
-        if (res.data.errorCode === ERR_OK) {
+        console.log(res)
+        if (res.data && res.data.errorCode === ERR_OK) {
           this.favoriteList = res.data.data.publishArticles
         }
       })
     },
     getFavoriteColumnist () {
       postApi('user.getFollowAuthorList', {
-        session: this.loginState.data.session,
+        session: this.loginState.data.session || this.loginState.data.data.session,
         page: 0
       }).then(res => {
-        if (res.data.errorCode === ERR_OK) {
+        if (res.data && res.data.errorCode === ERR_OK) {
           this.favoriteColumnist = res.data.data
         }
       })
@@ -138,7 +140,7 @@ export default {
       this.page++
       if (this.currentIndex === 1) {
         postApi('article.getKeepList', {
-          session: this.loginState.data.data.session,
+          session: this.loginState.data.session || this.loginState.data.data.session,
           page: this.page
         }).then((res) => {
           this.isLoad = false
@@ -157,7 +159,7 @@ export default {
       }
       if (this.currentIndex === 0) {
         postApi('user.getFollowAuthorList', {
-          session: this.loginState.data.data.session,
+          session: this.loginState.data.session || this.loginState.data.data.session,
           page: this.page
         }).then((res) => {
           this.isLoad = false
@@ -196,7 +198,7 @@ export default {
     deleteFavorite () {
       if (this.currentIndex === 1) {
         postApi('article.keep', {
-          session: this.loginState.data.data.session,
+          session: this.loginState.data.session || this.loginState.data.data.session,
           articleId: this.articleId
         }).then(res => {
           this.favoriteList = this.favoriteList.slice(0, this.n).concat(this.favoriteList.slice(this.n + 1))
@@ -204,7 +206,7 @@ export default {
       }
       if (this.currentIndex === 0) {
         postApi('user.follow', {
-          session: this.loginState.data.data.session,
+          session: this.loginState.data.session || this.loginState.data.data.session,
           followUserId: this.followUserId
         }).then(res => {
           this.favoriteColumnist = this.favoriteColumnist.slice(0, this.n).concat(this.favoriteColumnist.slice(this.n + 1))
