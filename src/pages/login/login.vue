@@ -29,15 +29,18 @@
         </transition>
       </form>
     </div>
-    <div class="login-wx" v-if="true">
+    <div class="login-wx">
       <i class="icon-weixin" @click="wxLogin"></i>
       <p>微信登录</p>
     </div>
-    <div class="login-mask"></div>
+    <div class="login-mask" v-if="isLogining">
+      <loading class="login-loading" :title="'正在登录...'"></loading>
+    </div>
   </div>
 </template>
 
 <script>
+import Loading from '../../components/loading/loading.vue'
 import {postApi} from '../../api/getApi.js'
 import {mapActions, mapGetters} from 'vuex'
 import {share} from '../../common/js/share.js'
@@ -51,6 +54,7 @@ export default {
       password: '',
       isTel: false,
       isPsw: false,
+      isLogining: false,
       shareVal: {
         title: document.title,
         summary: '赛恩财经，提供全球股票、外汇、期货、债券、基金和数字货币等数十万种金融投资产品的实时行情和新闻资讯以及多种投资工具。',
@@ -88,13 +92,14 @@ export default {
       }
     },
     toLogin () {
+      this.isLogining = true
       let loginParam = {
         mobileNumber: this.tel,
         password: this.password
       }
       postApi('user.login', loginParam).then(res => {
+        this.isLogining = false
         if (res.data.errorCode === ERR_OK) {
-          console.log(res)
           this.errors.push('成功登陆！')
           this.saveLoginState(res.data)
           if (window.history.length <= 1) {
@@ -154,6 +159,9 @@ export default {
         window.location.href = 'https://open.weixin.qq.com/connect/qrconnect?appid=wx70d395942c321a44&redirect_uri=' + pageUrl + '&response_type=code&scope=snsapi_login&state=0#wechat_redirect'
       }
     }
+  },
+  components: {
+    'loading': Loading
   }
 }
 </script>
@@ -260,6 +268,15 @@ export default {
     p
       font-size 1.4rem
       color #393a4c
+  .login-mask
+    position fixed
+    top 0
+    bottom 0
+    left 0
+    right 0
+    background-color rgba(7,17,27,0.9)
+    .login-loading
+      margin-top 50%
 @keyframes show-error
   0%
     opacity 0
