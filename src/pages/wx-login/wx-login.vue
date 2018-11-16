@@ -26,7 +26,10 @@ export default {
   },
   methods: {
     wxLogin () {
-      postApi('user.wxLogin', {code: this.$route.query.code}).then(res => {
+      postApi('user.wxLogin', {
+        code: this.$route.query.code,
+        wxBrowser: this.$route.query.state
+      }).then(res => {
         console.log(res)
         if (res.data.errorCode === '0') {
           this.saveLoginState(res.data)
