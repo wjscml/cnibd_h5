@@ -5,7 +5,7 @@
         <i class="icon-people"></i>
       </div>
       <div @click="changePrivateNav" class="login-btn" v-if="isLogin() && !isNavList">
-        <i class="icon-people"></i>
+        <img :src="avatar">
       </div>
       <div @click="goIndex">
         <i class="icon-logo"></i>
@@ -73,6 +73,13 @@ export default {
     }
   },
   computed: {
+    avatar: function () {
+      if (this.loginState.data.avatar) {
+        return this.loginState.data.avatar
+      } else if (this.loginState.data.data) {
+        return this.loginState.data.data.avatar
+      }
+    },
     ...mapGetters([
       'loginState'
     ])
@@ -145,14 +152,21 @@ export default {
     background #fff
     .login-btn
       extend-click()
+      width 2.8rem
       color #393a4c
       .icon-people
         font-size 2.5rem
+      img
+        width 2.8rem
+        height 2.8rem
+        border-radius 50%
     .icon-logo
       font-size 2.2rem
       color #1f8bee
     .nav-btn
       extend-click()
+      width 2.8rem
+      text-align right
       color #393a4c
       .icon-all
         font-size 2.5rem

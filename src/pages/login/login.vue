@@ -33,6 +33,7 @@
       <i class="icon-weixin" @click="wxLogin"></i>
       <p>微信登录</p>
     </div>
+    <div class="login-mask"></div>
   </div>
 </template>
 

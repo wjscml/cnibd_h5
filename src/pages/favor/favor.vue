@@ -102,7 +102,6 @@ export default {
     ])
   },
   created () {
-    console.log(this.loginState)
     if (this.loginState && this.loginState.errorCode === ERR_OK) {
       this.getFavoriteArticle()
       this.getFavoriteColumnist()
@@ -118,7 +117,6 @@ export default {
         session: this.loginState.data.session || this.loginState.data.data.session,
         page: 0
       }).then(res => {
-        console.log(res)
         if (res.data && res.data.errorCode === ERR_OK) {
           this.favoriteList = res.data.data.publishArticles
         }
