@@ -146,10 +146,11 @@ export default {
       'saveLoginState'
     ]),
     wxLogin () {
+      let pageUrl = encodeURIComponent('https://www.cnibd.com/wx-login')
       if (this.isWeiXin()) {
-        window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx70d395942c321a44&redirect_uri=https://www.cnibd.com/wx_login&response_type=code&scope=snsapi_userinfo&state=1&connect_redirect=1#wechat_redirect'
+        window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx70d395942c321a44&redirect_uri=' + pageUrl + '&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect'
       } else {
-        window.location.href = 'https://open.weixin.qq.com/connect/qrconnect?appid=wx70d395942c321a44&redirect_uri=https://www.cnibd.com/wx_login&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect'
+        window.location.href = 'https://open.weixin.qq.com/connect/qrconnect?appid=wx70d395942c321a44&redirect_uri=' + pageUrl + '&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect'
       }
     }
   }

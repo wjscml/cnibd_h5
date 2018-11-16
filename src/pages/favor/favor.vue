@@ -94,7 +94,7 @@ export default {
       if (this.currentIndex === 1) {
         return '暂无收藏文章'
       } else {
-        return '暂无收藏作者'
+        return '暂无关注作者'
       }
     },
     ...mapGetters([
