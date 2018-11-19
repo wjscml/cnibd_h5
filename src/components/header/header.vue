@@ -74,6 +74,7 @@ export default {
   },
   computed: {
     avatar: function () {
+      console.log(this.loginState.data)
       if (this.loginState.data.avatar) {
         return this.loginState.data.avatar
       } else if (this.loginState.data.data) {

@@ -31,7 +31,7 @@ export default {
         wxBrowser: this.$route.query.state
       }).then(res => {
         console.log(res)
-        if (res.data.errorCode === '0') {
+        if (res.data.errorCode === ERR_OK) {
           this.saveLoginState(res.data)
           this.isLogin = true
           this.$router.push({path: '/index'})
