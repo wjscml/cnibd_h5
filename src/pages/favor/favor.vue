@@ -141,17 +141,16 @@ export default {
           session: this.loginState.data.session || this.loginState.data.data.session,
           page: this.page
         }).then((res) => {
+          console.log(res)
           this.isLoad = false
           if (res.data.errorCode === ERR_OK) {
             this.favoriteList = this.favoriteList.concat(res.data.data.publishArticles)
             this.tips = '上滑加载更多'
-          } else {
-            this.tips = '没有更多数据了~'
           }
         }).catch(error => {
           if (!error.res) {
             this.isLoad = false
-            this.tips = '网络不给力，请稍后重试'
+            this.tips = '没有更多文章了~'
           }
         })
       }
@@ -160,17 +159,16 @@ export default {
           session: this.loginState.data.session || this.loginState.data.data.session,
           page: this.page
         }).then((res) => {
+          console.log(res)
           this.isLoad = false
-          if (res.data.errorCode === ERR_OK) {
+          if (res.data && res.data.errorCode === ERR_OK) {
             this.favoriteColumnist = this.favoriteColumnist.concat(res.data.data)
             this.tips = '上滑加载更多'
-          } else {
-            this.tips = '没有更多数据了~'
           }
         }).catch(error => {
           if (!error.res) {
             this.isLoad = false
-            this.tips = '网络不给力，请稍后重试'
+            this.tips = '没有更多作者了~'
           }
         })
       }

@@ -31,7 +31,7 @@
       <scroll @scroll="scroll" @touchToEnd="touchToEnd" :data="news" :pullUpLoad="pullUpLoad" :probeType="probeType" :listenScroll="listenScroll" class="list" ref="list">
         <div>
           <news-column :news="news" class="news-column"></news-column>
-          <load-tips v-if="news.length" :tips="tips" :isLoad="isLoad"></load-tips>
+          <load-tips v-if="news.length > 5" :tips="tips" :isLoad="isLoad"></load-tips>
         </div>
       </scroll>
       <confirm @confirm="confirmOK" :text="confirmText" ref="confirm"></confirm>

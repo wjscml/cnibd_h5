@@ -30,7 +30,6 @@ export default {
         code: this.$route.query.code,
         wxBrowser: this.$route.query.state
       }).then(res => {
-        console.log(res)
         if (res.data.errorCode === ERR_OK) {
           this.saveLoginState(res.data)
           this.isLogin = true
