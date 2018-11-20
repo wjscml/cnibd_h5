@@ -156,7 +156,7 @@ export default {
       if (this.isWeiXin()) {
         window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxb5b03bf29736518a&redirect_uri=' + pageUrl + '&response_type=code&scope=snsapi_userinfo&state=1&connect_redirect=1#wechat_redirect'
       } else {
-        window.location.href = 'https://open.weixin.qq.com/connect/qrconnect?appid=wx70d395942c321a44&redirect_uri=' + pageUrl + '&response_type=code&scope=snsapi_login&state=0#wechat_redirect'
+        window.location.href = 'https://open.weixin.qq.com/connect/qrconnect?appid=wx70d395942c321a44&redirect_uri=' + pageUrl + '&response_type=code&scope=snsapi_login&state=2#wechat_redirect'
       }
     }
   },
