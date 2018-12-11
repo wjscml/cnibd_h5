@@ -1,25 +1,49 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+  <div id="app" v-wechat-title="$route.meta.title">
+    <div class="app-content">
+      <v-header v-if="hasHeader"></v-header>
+      <router-view></router-view>
     </div>
-    <router-view/>
+    <v-footer class="app-footer"></v-footer>
   </div>
 </template>
-<style lang="stylus">
-#app
-  font-family 'Avenir', Helvetica, Arial, sans-serif
-  -webkit-font-smoothing antialiased
-  -moz-osx-font-smoothing grayscale
-  text-align center
-  color #2c3e50
 
-#nav
-  padding 30px
-  a
-    font-weight bold
-    color #2c3e50
-    &.router-link-exact-active
-      color #42b983
+<script>
+import Header from 'components/header/header.vue'
+import Footer from 'components/footer/footer.vue'
+import Bus from 'common/js/bus.js'
+
+export default {
+  data () {
+    return {
+      slide: {},
+      hasHeader: true
+    }
+  },
+  created () {
+    Bus.$on('getHasHeader', (data) => {
+      this.hasHeader = data
+    })
+  },
+  components: {
+    'v-header': Header,
+    'v-footer': Footer
+  }
+}
+</script>
+
+<style lang="stylus">
+@import "./common/stylus/index.styl"
+body
+  height 100%
+  background-color #f2f2f2
+  #app
+    min-height 100%
+    display flex
+    flex-direction column
+    justify-content space-between
+    box-sizing border-box
+    .app-content
+      flex-grow 1
+
 </style>

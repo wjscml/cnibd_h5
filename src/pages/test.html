@@ -1,19 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html style="height: 100%">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title></title>
     <meta name="keywords" content="赛恩财经，全球金融行情资讯专家|外汇,股票,期货,债券,数字货币行情和财经新闻">
     <meta name="description" content="赛恩财经，提供全球股票、外汇、期货、债券、基金和数字货币等数十万种金融投资产品的实时行情和新闻资讯以及多种投资工具。">
+    <link rel="shortcut icon" href="./favicon.ico">
   </head>
   <body>
-    <noscript>
-      <strong>We're sorry but cnibd_h5 doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
-    <div id="app"></div>
+    <div id="login_container"></div>
     <!-- built files will be auto injected -->
   </body>
 </html>
+<script src="http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></script>
+<script>
+
+  var obj = new WxLogin({
+    id:"login_container",
+    appid: "wx70d395942c321a44",
+    scope: "snsapi_login",
+    redirect_uri: "http://192.168.31.160:8080",
+    state: "",
+    style: "",
+    href: ""
+  })
+
+
+</script>
