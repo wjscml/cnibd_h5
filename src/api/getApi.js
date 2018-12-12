@@ -1,17 +1,20 @@
-import request from '../request'
-import requestcopy from '../requestcopy'
+import axios from 'axios'
+
+const service = axios.create({
+  baseURL: ''
+})
 
 export function getApi (apiRoute) {
-  return requestcopy({
-    url: apiRoute,
+  return service({
+    url: `https://www.cnibd.com/h5${apiRoute}`,
     method: 'get'
   })
 }
 
 export function postApi (apiRoute, param) {
-  return request({
+  return service({
     method: 'post',
-    url: `/index?method=${apiRoute}&format=json`,
+    url: `https://api.cnibd.com/site/index?method=${apiRoute}&format=json`,
     data: param,
     headers: {
       'Content-type': 'application/x-www-form-urlencoded'
