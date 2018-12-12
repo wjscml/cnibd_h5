@@ -10,7 +10,6 @@ import Loading from 'components/loading/loading.vue'
 import { getWxLogin } from 'api'
 import { mapActions } from 'vuex'
 
-const ERR_OK = '0'
 export default {
   data () {
     return {
