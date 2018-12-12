@@ -168,7 +168,7 @@ export default {
 </script>
 
 <style lang="stylus">
-@import "../../common/stylus/mixin.styl"
+@import "~common/stylus/mixin.styl"
 .login
   display flex
   flex-direction column
