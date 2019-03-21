@@ -153,7 +153,7 @@ export default {
       'saveLoginState'
     ]),
     wxLogin () {
-      let pageUrl = encodeURIComponent('https://h5.cnibd.com/wx_login')
+      let pageUrl = encodeURIComponent('https://www.cnibd.com/wx_login')
       if (this.isWeiXin()) {
         window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxb5b03bf29736518a&redirect_uri=' + pageUrl + '&response_type=code&scope=snsapi_userinfo&state=1&connect_redirect=1#wechat_redirect'
       } else {
